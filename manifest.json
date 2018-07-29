@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "version": "0.1.0",
+  "version": "0.1.3",
   "name": "Allow Right-Click",
   "description": "Re-enable the possibility to use the context menu on sites that overrides it",
 
@@ -35,5 +35,11 @@
     "scripts": [
       "background.js"
     ]
+  },
+  "applications": {
+    "gecko": {
+      "id": "{278b0ae0-da9d-4cc6-be81-5aa7f3202672}",
+      "strict_min_version": "59.0"
+    }
   }
 }
