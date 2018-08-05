@@ -3,46 +3,7 @@
 chrome.browserAction.onClicked.addListener(tab => chrome.tabs.executeScript(tab.id, {
   allFrames: true,
   matchAboutBlank: true,
-  code: `{
-    if (window.loaded) {
-      if (window === window.top) {
-        alert('Allow right-click is already installed. If you still have issues with the right-click context menu, please use the FAQs page to report!');
-      }
-    }
-    else {
-      window.loaded = true;
-      // allow context-menu
-      const script = document.createElement('script');
-      script.textContent = 'document.oncopy = document.onpaste = document.oncontextmenu = null;';
-      document.documentElement.appendChild(script);
-      document.documentElement.removeChild(script);
-      // find the correct element
-      let elements = [];
-      document.addEventListener('mousedown', e => {
-        const es = document.elementsFromPoint(e.clientX, e.clientY);
-        const imgs = es.filter(e => e.src && e.tagName !== 'VIDEO');
-        const vids = es.filter(e => e.src && e.tagName === 'VIDEO');
-
-        if (imgs.length || vids.length) {
-          for (const e of es) {
-            if (vids.length ? vids.indexOf(e) !== -1 : imgs.indexOf(e) !== -1) {
-              break;
-            }
-            else {
-              e.style['pointer-events'] = 'none';
-              elements.push(e);
-            }
-          }
-        }
-      });
-      document.addEventListener('contextmenu', () => window.setTimeout(() => {
-        for (const e of elements) {
-          e.style['pointer-events'] = 'unset';
-        }
-        elements = [];
-      }));
-    }
-  }`,
+  file: 'data/inject.js',
   runAt: 'document_start'
 }, () => {
   const lastError = chrome.runtime.lastError;
@@ -74,12 +35,12 @@ chrome.storage.local.get({
 
   if (prefs.version ? (prefs.faqs && prefs.version !== version) : true) {
     const now = Date.now();
-    const doUpdate = (now - prefs['last-update']) / 1000 / 60 / 60 / 24 > 30;
+    const doUpdate = (now - prefs['last-update']) / 1000 / 60 / 60 / 24 > 45;
     chrome.storage.local.set({
       version,
       'last-update': doUpdate ? Date.now() : prefs['last-update']
     }, () => {
-      // do not display the FAQs page if last-update occurred less than 30 days ago.
+      // do not display the FAQs page if last-update occurred less than 45 days ago.
       if (doUpdate) {
         const p = Boolean(prefs.version);
         window.setTimeout(() => chrome.tabs.create({
