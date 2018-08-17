@@ -32,9 +32,11 @@ else {
           break;
         }
         else {
-          e.dataset['pointer-events'] = e.style['pointer-events'];
+          elements.push({
+            e,
+            val: e.style['pointer-events']
+          });
           e.style['pointer-events'] = 'none';
-          elements.push(e);
         }
       }
       inject(`{
@@ -46,8 +48,8 @@ else {
     }
   });
   document.addEventListener('contextmenu', () => window.setTimeout(() => {
-    for (const e of elements) {
-      e.style['pointer-events'] = e.dataset['pointer-events'];
+    for (const {e, val} of elements) {
+      e.style['pointer-events'] = val;
     }
     elements = [];
   }));
