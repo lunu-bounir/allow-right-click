@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "version": "0.1.5",
+  "version": "0.1.6",
   "name": "Allow Right-Click",
   "description": "Re-enable the possibility to use the context menu on sites that overrides it",
 
@@ -15,11 +15,14 @@
 
   "permissions": [
     "storage",
-    "*://*/*"
+    "*://*/*",
+    "webNavigation",
+    "contextMenus",
+    "notifications"
   ],
 
   "browser_action": {
-    "default_title": "Click on this button to unblock browser's context menu if it is blocked",
+    "default_title": "A powerful context menu unblocker to allow access the URL of image, video and audio elements or copy and paste text",
     "default_icon": {
       "16": "data/icons/16.png",
       "32": "data/icons/32.png",
@@ -35,6 +38,10 @@
     "scripts": [
       "background.js"
     ]
+  },
+  "options_ui": {
+    "page": "data/options/index.html",
+    "open_in_tab": false
   },
   "applications": {
     "gecko": {

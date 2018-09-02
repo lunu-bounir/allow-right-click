@@ -1,18 +1,24 @@
 'use strict';
 
-chrome.browserAction.onClicked.addListener(tab => chrome.tabs.executeScript(tab.id, {
-  allFrames: true,
+var notify = message => chrome.notifications.create({
+  title: chrome.runtime.getManifest().name,
+  message,
+  type: 'basic',
+  iconUrl: 'data/icons/48.png'
+});
+
+const onClicked = (tabId, obj) => chrome.tabs.executeScript(tabId, Object.assign({
   matchAboutBlank: true,
   file: 'data/inject.js',
   runAt: 'document_start'
-}, () => {
+}, obj), () => {
   const lastError = chrome.runtime.lastError;
   if (lastError) {
     alert(lastError.message);
   }
   else {
     chrome.browserAction.setIcon({
-      tabId: tab.id,
+      tabId: tabId,
       path: {
         '16': 'data/icons/active/16.png',
         '19': 'data/icons/active/19.png',
@@ -23,7 +29,71 @@ chrome.browserAction.onClicked.addListener(tab => chrome.tabs.executeScript(tab.
       }
     });
   }
+});
+chrome.browserAction.onClicked.addListener(tab => onClicked(tab.id, {
+  allFrames: true
 }));
+
+// web navigation
+{
+  const cache = {};
+
+  const onCommitted = d => {
+    console.log(d);
+    if (d.frameId === 0) {
+      const {hostname} = new URL(d.url);
+      cache[d.tabId] = localStorage.getItem('hostname:' + hostname) === 'true';
+    }
+    if (cache[d.tabId]) {
+      onClicked(d.tabId, {
+        frameId: d.frameId
+      });
+    }
+  };
+  const callback = () => chrome.storage.local.get({
+    monitor: false
+  }, prefs => {
+    console.log(prefs);
+    chrome.webNavigation.onCommitted.removeListener(onCommitted);
+    if (prefs.monitor) {
+      chrome.webNavigation.onCommitted.addListener(onCommitted, {
+        url: [{
+          urlPrefix: 'http://'
+        }, {
+          urlPrefix: 'https://'
+        }]
+      });
+    }
+  });
+  chrome.runtime.onInstalled.addListener(callback);
+  chrome.runtime.onStartup.addListener(callback);
+  chrome.storage.onChanged.addListener(prefs => prefs.monitor && callback());
+}
+
+// context menu
+{
+  const callback = () => chrome.contextMenus.create({
+    id: 'add-to-whitelist',
+    title: 'Automatically activate extension on this hostname',
+    contexts: ['browser_action']
+  });
+  chrome.runtime.onInstalled.addListener(callback);
+  chrome.runtime.onStartup.addListener(callback);
+}
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  const url = tab.url;
+  if (url.startsWith('http')) {
+    const {hostname} = new URL(url);
+    localStorage.setItem('hostname:' + hostname, true);
+    chrome.storage.local.set({
+      monitor: true
+    });
+    notify(`"${hostname}" is added to the list`);
+  }
+  else {
+    notify('this is not a valid URL');
+  }
+});
 
 // FAQs & Feedback
 chrome.storage.local.get({
