@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+  <h1>Method 1 (overlay)</h1>
+  <style>
+    #one {
+      position: relative;
+      width: fit-content;
+    }
+    #one>div {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  </style>
+  <div id="one">
+    <img width="64" src="img.svg" alt="">
+    <div></div>
+  </div>
+
+  <h1>Method 2 (preventDefault)</h1>
+  <div id="two">
+    <img width="64" src="img.svg" alt="">
+  </div>
+  <script>
+    document.getElementById('two').addEventListener('contextmenu', e => {
+      e.preventDefault();
+    });
+  </script>
+
+  <h1>Method 3 (window.alert)</h1>
+  <div id="three">
+    <img width="64" src="img.svg" alt="">
+  </div>
+  <script>
+    document.getElementById('three').addEventListener('contextmenu', e => {
+      window.alert('Context Menu is not allowed');
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      e.preventDefault();
+    });
+  </script>
+
+  <h1>Method 4 (pointer-events: none)</h1>
+  <div id="three">
+    <img width="64" src="img.svg" alt="" style="pointer-events: none">
+  </div>
+</body>
+</html>

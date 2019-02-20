@@ -22,6 +22,10 @@ else {
     if (e.button !== 2) {
       return;
     }
+    // what if element is not clickable
+    [...e.target.querySelectorAll('img,video')].forEach(e => {
+      e.style['pointer-events'] = 'unset';
+    });
     const es = document.elementsFromPoint(e.clientX, e.clientY);
     const imgs = es.filter(e => e.src && e.tagName !== 'VIDEO');
     const vids = es.filter(e => e.src && e.tagName === 'VIDEO');
@@ -42,7 +46,7 @@ else {
       inject(`{
         const es = document.elementsFromPoint(${e.clientX}, ${e.clientY});
         for (const e of es) {
-          e.oncontextmenu = null;
+          e.oncontextmenu = e => e.preventDefault = () => {};
         }
       }`);
     }

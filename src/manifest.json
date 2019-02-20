@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "version": "0.1.6",
+  "version": "0.1.8",
   "name": "Allow Right-Click",
   "description": "Re-enable the possibility to use the context menu on sites that overrides it",
 
