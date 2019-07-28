@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "version": "0.1.8",
+  "version": "0.1.9",
   "name": "Allow Right-Click",
-  "description": "Re-enable the possibility to use the context menu on sites that overrides it",
+  "description": "Re-enable the possibility to use the context menu and text selection on sites that prevent them",
 
   "icons": {
     "16": "data/icons/16.png",

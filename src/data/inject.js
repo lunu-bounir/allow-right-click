@@ -1,12 +1,12 @@
 'use strict';
 
-if (window.loaded) {
+if (window.injected) {
   if (window === window.top) {
     alert('Allow right-click is already installed. If you still have issues with the right-click context menu, please use the FAQs page to report!');
   }
 }
 else {
-  window.loaded = true;
+  window.injected = true;
   //
   const inject = code => {
     const script = document.createElement('script');
@@ -15,7 +15,10 @@ else {
     script.remove();
   };
   // allow context-menu
-  inject('document.oncopy = document.onpaste = document.oncontextmenu = null;');
+  inject(`
+    document.onselectstart = document.oncopy = document.onpaste = document.oncontextmenu = null;
+    document.body.onselectstart = document.body.oncopy = document.body.onpaste = document.body.oncontextmenu = null;
+  `);
   // find the correct element
   let elements = [];
   document.addEventListener('mousedown', e => {
@@ -57,4 +60,9 @@ else {
     }
     elements = [];
   }));
+  // unblock contextmenu and more
+  inject(`{
+    MouseEvent.prototype.preventDefault = () => {};
+    ClipboardEvent.prototype.preventDefault = () => {};
+  }`);
 }

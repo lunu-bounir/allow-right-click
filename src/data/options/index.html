@@ -3,6 +3,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <style>
+      body {
+        min-width: 500px;
+      }
       textarea {
         margin-top: 10px;
         width: 100%;
@@ -15,10 +18,26 @@
     Automatically activate the extension on the following hostnames (comma-separated list of hostnames):
     <textarea id="whitelist" rows="6" placeholder="e.g.: www.google.com, www.bing.com"></textarea>
 
+    <table>
+      <colgroup>
+        <col>
+        <col>
+      </colgroup>
+      <tbody>
+        <tr>
+          <td><input type="checkbox" id="faqs"></td>
+          <td><label for="faqs">Open FAQs page on updates</label></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div id="explore"></div>
     <p>
-      <input type="button" id="save" value="Save"/>
-      <span id="toast"></span>
+      <input type="button" id="support" value="Support Development">
+      <input type="button" id="reset" value="Factory Reset"/> - <input type="button" id="save" value="Save"/>
+      <span id="toast" style="float: right;"></span>
     </p>
     <script type="text/javascript" src="index.js"></script>
+    <script async type="text/javascript" src="matched.js"></script>
   </body>
 </html>

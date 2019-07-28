@@ -51,5 +51,17 @@
   <div id="three">
     <img width="64" src="img.svg" alt="" style="pointer-events: none">
   </div>
+
+  <h1>Method 5 (contextmenu)</h1>
+  <input type="text" id="five" placeholder="try to right-click">
+  <script type="text/javascript">
+    document.getElementById('five').addEventListener('contextmenu', e => e.preventDefault());
+  </script>
+
+  <h1>Method 6 (past)</h1>
+  <input type="text" id="six" placeholder="try to paste text">
+  <script type="text/javascript">
+    document.getElementById('six').addEventListener('paste', e => e.preventDefault());
+  </script>
 </body>
 </html>
