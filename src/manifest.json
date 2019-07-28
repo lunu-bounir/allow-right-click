@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "version": "0.1.9",
+  "version": "0.2.0",
   "name": "Allow Right-Click",
   "description": "Re-enable the possibility to use the context menu and text selection on sites that prevent them",
 
@@ -42,11 +42,5 @@
   "options_ui": {
     "page": "data/options/index.html",
     "open_in_tab": false
-  },
-  "applications": {
-    "gecko": {
-      "id": "{278b0ae0-da9d-4cc6-be81-5aa7f3202672}",
-      "strict_min_version": "59.0"
-    }
   }
 }
