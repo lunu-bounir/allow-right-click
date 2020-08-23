@@ -18,6 +18,11 @@ else {
   inject(`
     document.onselectstart = document.oncopy = document.onpaste = document.oncontextmenu = null;
     document.body.onselectstart = document.body.oncopy = document.body.onpaste = document.body.oncontextmenu = null;
+    document.addEventListener('paste', e => {
+      if (e.defaultPrevented) {
+        document.execCommand('insertText', null, e.clipboardData.getData('Text'));
+      }
+    });
   `);
   // find the correct element
   let elements = [];
