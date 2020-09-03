@@ -79,7 +79,7 @@ chrome.browserAction.onClicked.addListener(tab => onClicked(tab.id, {
   chrome.runtime.onStartup.addListener(callback);
 }
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  const url = tab.url;
+  const url = tab.url || info.pageUrl;
   if (url.startsWith('http')) {
     const {hostname} = new URL(url);
     localStorage.setItem('hostname:' + hostname, true);

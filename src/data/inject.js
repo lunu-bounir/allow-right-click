@@ -22,6 +22,13 @@ else {
     document.oncopy =
     document.onpaste =
     document.oncontextmenu = null;
+    // do not allow altering
+    Object.defineProperty(document, 'ondragstart', {});
+    Object.defineProperty(document, 'onmousedown', {});
+    Object.defineProperty(document, 'onselectstart', {});
+    Object.defineProperty(document, 'oncopy', {});
+    Object.defineProperty(document, 'onpaste', {});
+    Object.defineProperty(document, 'oncontextmenu', {});
 
     document.body.ondragstart =
     document.body.onmousedown =
@@ -29,6 +36,13 @@ else {
     document.body.oncopy =
     document.body.onpaste =
     document.body.oncontextmenu = null;
+    // do not allow altering
+    Object.defineProperty(document.body, 'ondragstart', {});
+    Object.defineProperty(document.body, 'onmousedown', {});
+    Object.defineProperty(document.body, 'onselectstart', {});
+    Object.defineProperty(document.body, 'oncopy', {});
+    Object.defineProperty(document.body, 'onpaste', {});
+    Object.defineProperty(document.body, 'oncontextmenu', {});
 
     document.addEventListener('paste', e => {
       if (e.defaultPrevented) {
