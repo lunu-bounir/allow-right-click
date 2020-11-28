@@ -46,7 +46,18 @@ else {
 
     document.addEventListener('paste', e => {
       if (e.defaultPrevented) {
-        document.execCommand('insertText', null, e.clipboardData.getData('Text'));
+        const content = e.clipboardData.getData('Text');
+        if (document.execCommand('insertText', null, content) === false) {
+          if ('selectionStart' in e.target && 'selectionEnd' in e.target) {
+            const old = e.target.value;
+            const offset = e.target.selectionStart;
+            e.target.value = old.substr(0, offset) + content + old.substr(e.target.selectionEnd);
+            e.target.selectionStart = e.target.selectionEnd = offset + content.length;
+          }
+          else {
+            e.target.value = content;
+          }
+        }
       }
     });
   `);
