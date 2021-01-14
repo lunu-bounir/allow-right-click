@@ -30,19 +30,27 @@ else {
     Object.defineProperty(document, 'onpaste', {});
     Object.defineProperty(document, 'oncontextmenu', {});
 
-    document.body.ondragstart =
-    document.body.onmousedown =
-    document.body.onselectstart =
-    document.body.oncopy =
-    document.body.onpaste =
-    document.body.oncontextmenu = null;
-    // do not allow altering
-    Object.defineProperty(document.body, 'ondragstart', {});
-    Object.defineProperty(document.body, 'onmousedown', {});
-    Object.defineProperty(document.body, 'onselectstart', {});
-    Object.defineProperty(document.body, 'oncopy', {});
-    Object.defineProperty(document.body, 'onpaste', {});
-    Object.defineProperty(document.body, 'oncontextmenu', {});
+    const body = () => {
+      document.body.ondragstart =
+      document.body.onmousedown =
+      document.body.onselectstart =
+      document.body.oncopy =
+      document.body.onpaste =
+      document.body.oncontextmenu = null;
+      // do not allow altering
+      Object.defineProperty(document.body, 'ondragstart', {});
+      Object.defineProperty(document.body, 'onmousedown', {});
+      Object.defineProperty(document.body, 'onselectstart', {});
+      Object.defineProperty(document.body, 'oncopy', {});
+      Object.defineProperty(document.body, 'onpaste', {});
+      Object.defineProperty(document.body, 'oncontextmenu', {});
+    };
+    if (document.body) {
+      body()
+    }
+    else {
+      document.addEventListener('DOMContentLoaded', body);
+    }
 
     document.addEventListener('paste', e => {
       if (e.defaultPrevented) {
@@ -60,6 +68,8 @@ else {
         }
       }
     });
+
+    window.alert = alert = (...args) => console.log('[alert is blocked]', ...args);
   `);
   // find the correct element
   let elements = [];

@@ -1,18 +1,19 @@
 {
   "manifest_version": 2,
-  "version": "0.2.4",
+  "version": "0.2.5",
   "name": "Allow Right-Click",
-  "description": "Re-enable the possibility to use the context menu and text selection on sites that prevent them",
-
+  "description": "Re-enable the possibility to use the context menu, copy, paste, and text selection on sites that prevent them",
   "icons": {
     "16": "data/icons/16.png",
+    "19": "data/icons/19.png",
     "32": "data/icons/32.png",
+    "38": "data/icons/38.png",
     "48": "data/icons/48.png",
     "64": "data/icons/64.png",
     "128": "data/icons/128.png",
-    "256": "data/icons/256.png"
+    "256": "data/icons/256.png",
+    "512": "data/icons/512.png"
   },
-
   "permissions": [
     "storage",
     "*://*/*",
@@ -20,20 +21,16 @@
     "contextMenus",
     "notifications"
   ],
-
   "browser_action": {
-    "default_title": "A powerful context menu unblocker to allow access the URL of image, video and audio elements or copy and paste text"
+    "default_title": "A powerful unblocker to allow access the URL of image, video and audio elements or copy and paste text"
   },
-
-  "homepage_url": "http://add0n.com/allow-right-click.html",
-
+  "homepage_url": "https://add0n.com/allow-right-click.html",
   "background": {
     "persistent": false,
     "scripts": [
       "background.js"
     ]
   },
-
   "options_ui": {
     "page": "data/options/index.html",
     "open_in_tab": false
