@@ -8,6 +8,21 @@ if (window.injected) {
 else {
   window.injected = true;
   //
+  document.documentElement.style['user-select'] = 'initial';
+  document.documentElement.style['-webkit-user-select'] = 'initial';
+  document.documentElement.style['-moz-user-select'] = 'initial';
+  const body = () => {
+    document.body.style['user-select'] = 'initial';
+    document.body.style['-webkit-user-select'] = 'initial';
+    document.body.style['-moz-user-select'] = 'initial';
+  };
+  if (document.body) {
+    body();
+  }
+  else {
+    document.addEventListener('DOMContentLoaded', body);
+  }
+  //
   const inject = code => {
     const script = document.createElement('script');
     script.textContent = code;
