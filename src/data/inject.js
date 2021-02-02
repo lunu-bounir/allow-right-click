@@ -7,21 +7,81 @@ if (window.injected) {
 }
 else {
   window.injected = true;
-  //
-  document.documentElement.style['user-select'] = 'initial';
-  document.documentElement.style['-webkit-user-select'] = 'initial';
-  document.documentElement.style['-moz-user-select'] = 'initial';
-  const body = () => {
-    document.body.style['user-select'] = 'initial';
-    document.body.style['-webkit-user-select'] = 'initial';
-    document.body.style['-moz-user-select'] = 'initial';
-  };
-  if (document.body) {
-    body();
+  // style
+  {
+    let i = 0;
+    const clean = sheet => {
+      i += 1;
+      console.log(i);
+      try {
+        const check = rule => {
+          const {style} = rule;
+          if (style['user-select']) {
+            style['user-select'] = 'initial';
+          }
+        };
+        for (const rule of sheet.rules) {
+          if (rule.style) {
+            check(rule);
+          }
+          else if (rule.cssRules) {
+            for (const r of rule.cssRules) {
+              check(r);
+            }
+          }
+        }
+      }
+      catch (e) {}
+    };
+    const check = () => {
+      console.log('checking');
+      for (const sheet of document.styleSheets) {
+        if (check.cache.has(sheet)) {
+          continue;
+        }
+        const node = sheet.ownerNode;
+        if (node.tagName === 'STYLE') {
+          check.cache.set(sheet, true);
+          clean(sheet);
+        }
+        else if (node.tagName === 'LINK') {
+          check.cache.set(sheet, true);
+          clean(sheet);
+        }
+      }
+    };
+    check.cache = new WeakMap();
+    const observer = new MutationObserver(ms => {
+      let update = false;
+      for (const m of ms) {
+        for (const node of m.addedNodes) {
+          if (node.nodeType === Node.TEXT_NODE) {
+            const {target} = m;
+            if (target.tagName === 'STYLE') {
+              update = true;
+            }
+          }
+          else if (node.nodeType === Node.ELEMENT_NODE) {
+            if (node.tagName === 'LINK' && node.rel === 'stylesheet') {
+              node.addEventListener('load', () => check());
+            }
+            if (node.tagName === 'STYLE') {
+              update = true;
+            }
+          }
+        }
+      }
+      if (update) {
+        check();
+      }
+    });
+    observer.observe(document.documentElement, {
+      subtree: true,
+      childList: true
+    });
+    check();
   }
-  else {
-    document.addEventListener('DOMContentLoaded', body);
-  }
+
   //
   const inject = code => {
     const script = document.createElement('script');
