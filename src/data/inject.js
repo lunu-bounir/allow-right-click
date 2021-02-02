@@ -7,12 +7,9 @@ if (window.injected) {
 }
 else {
   window.injected = true;
-  // style
+  // user-select
   {
-    let i = 0;
     const clean = sheet => {
-      i += 1;
-      console.log(i);
       try {
         const check = rule => {
           const {style} = rule;
@@ -34,17 +31,12 @@ else {
       catch (e) {}
     };
     const check = () => {
-      console.log('checking');
       for (const sheet of document.styleSheets) {
         if (check.cache.has(sheet)) {
           continue;
         }
         const node = sheet.ownerNode;
-        if (node.tagName === 'STYLE') {
-          check.cache.set(sheet, true);
-          clean(sheet);
-        }
-        else if (node.tagName === 'LINK') {
+        if (node.tagName === 'STYLE' || node.tagName === 'LINK') {
           check.cache.set(sheet, true);
           clean(sheet);
         }
@@ -81,7 +73,6 @@ else {
     });
     check();
   }
-
   //
   const inject = code => {
     const script = document.createElement('script');
