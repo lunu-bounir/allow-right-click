@@ -72,7 +72,7 @@ chrome.browserAction.onClicked.addListener(tab => onClicked(tab.id, {
 {
   const callback = () => chrome.contextMenus.create({
     id: 'add-to-whitelist',
-    title: 'Automatically activate extension on this hostname',
+    title: 'Automatically Activate this Extension on this Hostname',
     contexts: ['browser_action']
   });
   chrome.runtime.onInstalled.addListener(callback);
