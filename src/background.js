@@ -1,5 +1,7 @@
 'use strict';
 
+const isFirefox = /Firefox/.test(navigator.userAgent) || typeof InstallTrigger !== 'undefined';
+
 const notify = message => chrome.notifications.create({
   title: chrome.runtime.getManifest().name,
   message,
@@ -14,6 +16,7 @@ const onClicked = (tabId, obj) => chrome.tabs.executeScript(tabId, Object.assign
 }, obj), () => {
   const lastError = chrome.runtime.lastError;
   if (lastError) {
+    console.log(lastError);
     alert(lastError.message);
   }
   else {
@@ -52,9 +55,10 @@ chrome.browserAction.onClicked.addListener(tab => onClicked(tab.id, {
   const callback = () => chrome.storage.local.get({
     monitor: false
   }, prefs => {
-    chrome.webNavigation.onCommitted.removeListener(onCommitted);
+    const method = isFirefox ? 'onDOMContentLoaded' : 'onCommitted';
+    chrome.webNavigation[method].removeListener(onCommitted);
     if (prefs.monitor) {
-      chrome.webNavigation.onCommitted.addListener(onCommitted, {
+      chrome.webNavigation[method].addListener(onCommitted, {
         url: [{
           urlPrefix: 'http://'
         }, {

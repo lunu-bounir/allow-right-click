@@ -13,7 +13,7 @@ if (window.injected) {
 }
 else {
   window.injected = true;
-  // user-select
+  // user-select (sheet)
   {
     const clean = sheet => {
       try {
@@ -78,6 +78,25 @@ else {
       childList: true
     });
     check();
+  }
+  // user-select (inline)
+  {
+    const observer = new MutationObserver(ms => {
+      ms.forEach(m => {
+        if (m.target && m.target.style['user-select']) {
+          m.target.style['user-select'] = 'initial';
+        }
+      });
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      subtree: true,
+      attributeFilter: ['style']
+    });
+    [...document.querySelectorAll('[style]')].filter(e => e.style['user-select']).forEach(e => {
+      console.log(e);
+      e.style['user-select'] = 'initial';
+    });
   }
   //
   const inject = code => {
