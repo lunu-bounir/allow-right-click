@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "version": "0.2.7",
+  "version": "0.2.9",
   "name": "Allow Right-Click",
   "description": "Re-enable the possibility to use the context menu, copy, paste, and text selection on sites that prevent them",
   "icons": {

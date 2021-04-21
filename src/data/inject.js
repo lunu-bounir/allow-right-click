@@ -1,5 +1,11 @@
 'use strict';
 
+// Tests
+// https://yonobusiness.sbi/login/yonobusinesslogin -> paste
+// https://m.blog.naver.com/PostView.nhn?blogId=nurisejong&logNo=221050681781&targetKeyword=&targetRecommendationCode=1 -> text selection
+// https://500px.com/photo/1018247498/Moon-for-Sale-2-by-milos-nejezchleb/
+
+
 if (window.injected) {
   if (window === window.top) {
     alert('Allow right-click is already installed. If you still have issues with the right-click context menu, please use the FAQs page to report!');
@@ -95,6 +101,14 @@ else {
     Object.defineProperty(document, 'oncopy', {});
     Object.defineProperty(document, 'onpaste', {});
     Object.defineProperty(document, 'oncontextmenu', {});
+    // bypass all registered listeners
+    document.addEventListener('dragstart', e => e.stopPropagation(), true);
+    // conflicts with the internal context menu bypass
+    // document.addEventListener('mousedown', e => e.stopPropagation(), true);
+    document.addEventListener('selectstart', e => e.stopPropagation(), true);
+    document.addEventListener('copy', e => e.stopPropagation(), true);
+    document.addEventListener('paste', e => e.stopPropagation(), true);
+    document.addEventListener('contextmenu', e => e.stopPropagation(), true);
 
     const body = () => {
       document.body.ondragstart =
@@ -117,23 +131,6 @@ else {
     else {
       document.addEventListener('DOMContentLoaded', body);
     }
-
-    document.addEventListener('paste', e => {
-      if (e.defaultPrevented) {
-        const content = e.clipboardData.getData('Text');
-        if (document.execCommand('insertText', null, content) === false) {
-          if ('selectionStart' in e.target && 'selectionEnd' in e.target) {
-            const old = e.target.value;
-            const offset = e.target.selectionStart;
-            e.target.value = old.substr(0, offset) + content + old.substr(e.target.selectionEnd);
-            e.target.selectionStart = e.target.selectionEnd = offset + content.length;
-          }
-          else {
-            e.target.value = content;
-          }
-        }
-      }
-    });
 
     window.alert = alert = (...args) => console.log('[alert is blocked]', ...args);
   `);
