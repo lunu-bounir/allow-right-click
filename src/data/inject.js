@@ -3,6 +3,7 @@
 // Tests
 // https://yonobusiness.sbi/login/yonobusinesslogin -> paste
 // https://m.blog.naver.com/PostView.nhn?blogId=nurisejong&logNo=221050681781&targetKeyword=&targetRecommendationCode=1 -> text selection
+// https://blog.daum.net/simhsook48/2592 -> text selection
 // https://500px.com/photo/1018247498/Moon-for-Sale-2-by-milos-nejezchleb/
 
 
@@ -94,16 +95,21 @@ else {
       attributeFilter: ['style']
     });
     [...document.querySelectorAll('[style]')].filter(e => e.style['user-select']).forEach(e => {
-      console.log(e);
       e.style['user-select'] = 'initial';
     });
   }
   //
   const inject = code => {
     const script = document.createElement('script');
-    script.textContent = code;
+    script.textContent = 'document.currentScript.dataset.injected = true;' + code;
     document.documentElement.appendChild(script);
     script.remove();
+    if (script.dataset.injected !== 'true') {
+      const s = document.createElement('script');
+      s.src = 'data:text/javascript;charset=utf-8;base64,' + btoa(code);
+      s.onload = () => s.remove();
+      document.documentElement.appendChild(s);
+    }
   };
   // allow context-menu
   inject(`
