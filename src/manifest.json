@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "version": "0.3.1",
+  "version": "0.3.2",
   "name": "Allow Right-Click",
   "description": "Re-enable the possibility to use the context menu, copy, paste, and text selection on sites that prevent them",
   "icons": {
@@ -21,9 +21,7 @@
     "contextMenus",
     "notifications"
   ],
-  "browser_action": {
-    "default_title": "A powerful unblocker to allow access the URL of image, video and audio elements or copy and paste text"
-  },
+  "browser_action": {},
   "homepage_url": "https://add0n.com/allow-right-click.html",
   "background": {
     "persistent": false,

@@ -9,7 +9,7 @@
 
 if (window.injected) {
   if (window === window.top) {
-    alert('Allow right-click is already installed. If you still have issues with the right-click context menu, please use the FAQs page to report!');
+    alert('Unblock module is already installed. If you still have an issue with right-clicking, please use the FAQs page to report!');
   }
 }
 else {
