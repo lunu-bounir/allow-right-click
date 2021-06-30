@@ -1,7 +1,7 @@
 'use strict';
 
-var toast = document.getElementById('toast');
-var keys = Object.keys(localStorage).filter(k => k.startsWith('hostname:'));
+const toast = document.getElementById('toast');
+const keys = Object.keys(localStorage).filter(k => k.startsWith('hostname:'));
 
 document.getElementById('whitelist').value = keys.map(key => key.replace('hostname:', '')).join(', ');
 chrome.storage.local.get({
@@ -10,7 +10,20 @@ chrome.storage.local.get({
 
 document.getElementById('save').addEventListener('click', () => {
   keys.forEach(key => localStorage.removeItem(key));
-  const hostnames = document.getElementById('whitelist').value.split(/\s*,\s*/).filter(s => s);
+  const hostnames = document.getElementById('whitelist').value.split(/\s*,\s*/).map(s => {
+    s = s.trim();
+    console.log(s, s && s.startsWith('http'), document.getElementById('whitelist').value.split(/\s*,\s*/));
+    if (s && s.startsWith('http')) {
+      try {
+        return (new URL(s)).hostname;
+      }
+      catch (e) {
+        console.log(e);
+        return '';
+      }
+    }
+    return s;
+  }).filter((s, i, l) => s && l.indexOf(s) === i);
 
   hostnames.forEach(hostname => {
     localStorage.setItem('hostname:' + hostname, true);
