@@ -5,6 +5,7 @@
 // https://m.blog.naver.com/PostView.nhn?blogId=nurisejong&logNo=221050681781&targetKeyword=&targetRecommendationCode=1 -> text selection
 // https://blog.daum.net/simhsook48/2592 -> text selection
 // https://500px.com/photo/1018247498/Moon-for-Sale-2-by-milos-nejezchleb/
+// https://www.ploshtadslaveikov.com/reaktsii-za-statuyata-na-dayana-izobrazena-e-kato-nova-bogoroditsa-zashto/ -> text selection
 
 
 if (window.injected) {
@@ -22,6 +23,9 @@ else {
           const {style} = rule;
           if (style['user-select']) {
             style['user-select'] = 'initial';
+          }
+          if (style['pointer-events']) {
+            style['pointer-events'] = 'initial';
           }
         };
         for (const rule of sheet.rules) {
@@ -84,8 +88,13 @@ else {
   {
     const observer = new MutationObserver(ms => {
       ms.forEach(m => {
-        if (m.target && m.target.style['user-select']) {
-          m.target.style['user-select'] = 'initial';
+        if (m.target) {
+          if (m.target.style['user-select']) {
+            m.target.style['user-select'] = 'initial';
+          }
+          if (m.target.style['pointer-events']) {
+            m.target.style['pointer-events'] = 'initial';
+          }
         }
       });
     });
@@ -94,8 +103,13 @@ else {
       subtree: true,
       attributeFilter: ['style']
     });
-    [...document.querySelectorAll('[style]')].filter(e => e.style['user-select']).forEach(e => {
-      e.style['user-select'] = 'initial';
+    [...document.querySelectorAll('[style]')].forEach(e => {
+      if (e.style['user-select']) {
+        e.style['user-select'] = 'initial';
+      }
+      if (e.style['pointer-events']) {
+        e.style['pointer-events'] = 'initial';
+      }
     });
   }
   //

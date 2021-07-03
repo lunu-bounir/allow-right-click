@@ -55,3 +55,29 @@ document.getElementById('reset').addEventListener('click', e => {
 document.getElementById('support').addEventListener('click', () => chrome.tabs.create({
   url: chrome.runtime.getManifest().homepage_url + '?rd=donate'
 }));
+
+//
+chrome.permissions.contains({
+  permissions: ['webNavigation'],
+  origins: ['*://*/*']
+}, granted => {
+  document.getElementById('whitelist').disabled = granted === false;
+  document.getElementById('webNavigation').checked = granted;
+});
+document.getElementById('webNavigation').onchange = e => {
+  if (e.target.checked) {
+    chrome.permissions.request({
+      permissions: ['webNavigation'],
+      origins: ['*://*/*']
+    }, granted => {
+      document.getElementById('whitelist').disabled = granted === false;
+      document.getElementById('webNavigation').checked = granted;
+      chrome.storage.local.set({
+        monitor: granted
+      });
+    });
+  }
+  else {
+    document.getElementById('whitelist').disabled = true;
+  }
+};

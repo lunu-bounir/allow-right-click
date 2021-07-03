@@ -16,7 +16,7 @@ const onClicked = (tabId, obj) => chrome.tabs.executeScript(tabId, Object.assign
 }, obj), () => {
   const lastError = chrome.runtime.lastError;
   if (lastError) {
-    console.log(lastError);
+    console.warn(lastError);
     alert(lastError.message);
   }
   else {
@@ -40,6 +40,7 @@ chrome.browserAction.onClicked.addListener(tab => onClicked(tab.id, {
 // web navigation
 {
   const cache = {};
+  chrome.tabs.onRemoved.addListener(tabId => delete cache[tabId]);
 
   const onCommitted = d => {
     if (d.frameId === 0) {
@@ -56,14 +57,21 @@ chrome.browserAction.onClicked.addListener(tab => onClicked(tab.id, {
     monitor: false
   }, prefs => {
     const method = isFirefox ? 'onDOMContentLoaded' : 'onCommitted';
-    chrome.webNavigation[method].removeListener(onCommitted);
-    if (prefs.monitor) {
-      chrome.webNavigation[method].addListener(onCommitted, {
-        url: [{
-          urlPrefix: 'http://'
-        }, {
-          urlPrefix: 'https://'
-        }]
+    if (chrome.webNavigation) {
+      chrome.webNavigation[method].removeListener(onCommitted);
+      if (prefs.monitor) {
+        chrome.webNavigation[method].addListener(onCommitted, {
+          url: [{
+            urlPrefix: 'http://'
+          }, {
+            urlPrefix: 'https://'
+          }]
+        });
+      }
+    }
+    else {
+      chrome.storage.local.set({
+        monitor: false
       });
     }
   });
@@ -87,10 +95,16 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (url.startsWith('http')) {
     const {hostname} = new URL(url);
     localStorage.setItem('hostname:' + hostname, true);
-    chrome.storage.local.set({
-      monitor: true
-    });
-    notify(`"${hostname}" is added to the list`);
+    if (chrome.webNavigation) {
+      chrome.storage.local.set({
+        monitor: true
+      });
+      notify(`"${hostname}" is added to the list`);
+    }
+    else {
+      notify('For this feature to work, you need to enable "webNavigation" permission from the options page');
+      setTimeout(() => chrome.runtime.openOptionsPage(), 3000);
+    }
   }
   else {
     notify('this is not a valid URL');
