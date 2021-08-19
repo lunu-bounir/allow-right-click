@@ -75,8 +75,7 @@ chrome.browserAction.onClicked.addListener(tab => onClicked(tab.id, {
       });
     }
   });
-  chrome.runtime.onInstalled.addListener(callback);
-  chrome.runtime.onStartup.addListener(callback);
+  callback();
   chrome.storage.onChanged.addListener(prefs => prefs.monitor && callback());
 }
 
