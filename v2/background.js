@@ -76,7 +76,11 @@ chrome.browserAction.onClicked.addListener(tab => onClicked(tab.id, {
     }
   });
   callback();
-  chrome.storage.onChanged.addListener(prefs => prefs.monitor && callback());
+  chrome.storage.onChanged.addListener(prefs => {
+    if (prefs.monitor && prefs.monitor.newValue !== prefs.monitor.oldValue) {
+      callback();
+    }
+  });
 }
 
 // context menu
