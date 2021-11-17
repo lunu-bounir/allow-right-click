@@ -8,6 +8,7 @@
 // https://www.ploshtadslaveikov.com/reaktsii-za-statuyata-na-dayana-izobrazena-e-kato-nova-bogoroditsa-zashto/ -> text selection
 // https://www.instagram.com/p/CQ1DhTvs8PI/
 // https://everyhark.tistory.com/298
+// https://www.washingtonpost.com/photography/interactive/2021/surreal-photos-show-aftereffects-eruption-spains-cumbre-vieja-volcano/
 
 if (window.injected) {
   if (window === window.top) {
@@ -183,11 +184,22 @@ else {
     }
     // what if element is not clickable
     [...e.target.querySelectorAll('img,video')].forEach(e => {
-      e.style['pointer-events'] = 'unset';
+      e.style.setProperty('pointer-events', 'all', 'important');
+      // e.style['pointer-events'] = 'unset';
     });
     const es = document.elementsFromPoint(e.clientX, e.clientY);
+
     const imgs = es.filter(e => e.src && e.tagName !== 'VIDEO');
     const vids = es.filter(e => e.src && e.tagName === 'VIDEO');
+
+    const nlfy = e => {
+      elements.push({
+        e,
+        val: e.style['pointer-events']
+      });
+      e.style['pointer-events'] = 'none';
+      e.dataset.igblock = true;
+    };
 
     if (imgs.length || vids.length) {
       for (const e of es) {
@@ -195,12 +207,7 @@ else {
           break;
         }
         else {
-          elements.push({
-            e,
-            val: e.style['pointer-events']
-          });
-          e.style['pointer-events'] = 'none';
-          e.dataset.igblock = true;
+          nlfy(e);
         }
       }
       inject(`{
