@@ -1,14 +1,15 @@
 'use strict';
 
 // Tests
+// https://500px.com/photo/1018247498/Moon-for-Sale-2-by-milos-nejezchleb/ -> right-click on image
+// http://www.thelogconnection.com/gallery.php -> right-click on image
+// https://www.instagram.com/p/CQ1DhTvs8PI/ -> right-click on image
+// https://www.washingtonpost.com/photography/interactive/2021/surreal-photos-show-aftereffects-eruption-spains-cumbre-vieja-volcano/ -> right-click on image
 // https://yonobusiness.sbi/login/yonobusinesslogin -> paste
-// https://m.blog.naver.com/PostView.nhn?blogId=nurisejong&logNo=221050681781&targetKeyword=&targetRecommendationCode=1 -> text selection
 // https://blog.daum.net/simhsook48/2592 -> text selection
-// https://500px.com/photo/1018247498/Moon-for-Sale-2-by-milos-nejezchleb/
+// https://m.blog.naver.com/PostView.nhn?blogId=nurisejong&logNo=221050681781&targetKeyword=&targetRecommendationCode=1 -> text selection
 // https://www.ploshtadslaveikov.com/reaktsii-za-statuyata-na-dayana-izobrazena-e-kato-nova-bogoroditsa-zashto/ -> text selection
-// https://www.instagram.com/p/CQ1DhTvs8PI/
-// https://everyhark.tistory.com/298
-// https://www.washingtonpost.com/photography/interactive/2021/surreal-photos-show-aftereffects-eruption-spains-cumbre-vieja-volcano/
+// https://everyhark.tistory.com/298 -> text selection
 
 if (window.injected) {
   if (window === window.top) {
@@ -23,6 +24,14 @@ else {
     .copy-protection-on #single-article-right,
     .copy-protection-on {
       pointer-events: initial !important;
+    }
+    ::-moz-selection {
+      color: #000;
+      background: #accef7;
+    }
+    ::selection {
+      color: #000;
+      background: #accef7;
     }
   `;
   (document.head || document.documentElement).appendChild(s);
@@ -145,8 +154,6 @@ else {
     Object.defineProperty(document, 'oncontextmenu', {});
     // bypass all registered listeners
     document.addEventListener('dragstart', e => e.stopPropagation(), true);
-    // conflicts with the internal context menu bypass
-    // document.addEventListener('mousedown', e => e.stopPropagation(), true);
     document.addEventListener('selectstart', e => e.stopPropagation(), true);
     document.addEventListener('copy', e => e.stopPropagation(), true);
     document.addEventListener('paste', e => e.stopPropagation(), true);
@@ -182,6 +189,8 @@ else {
     if (e.button !== 2) {
       return;
     }
+    e.stopPropagation();
+
     // what if element is not clickable
     [...e.target.querySelectorAll('img,video')].forEach(e => {
       e.style.setProperty('pointer-events', 'all', 'important');
@@ -217,14 +226,15 @@ else {
         }
       }`);
     }
-  });
-  document.addEventListener('contextmenu', () => window.setTimeout(() => {
-    for (const {e, val} of elements) {
-      e.style['pointer-events'] = val;
-      delete e.dataset.igblock;
-    }
-    elements = [];
-  }));
+    window.setTimeout(() => {
+      for (const {e, val} of elements) {
+        e.style['pointer-events'] = val;
+        delete e.dataset.igblock;
+      }
+      elements = [];
+    });
+  }, true);
+
   // unblock contextmenu and more
   inject(`{
     MouseEvent.prototype.preventDefault = () => {};
