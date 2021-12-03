@@ -232,7 +232,7 @@ else {
         delete e.dataset.igblock;
       }
       elements = [];
-    }, 100);
+    }, 300);
   }, true);
 
   // unblock contextmenu and more
