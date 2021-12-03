@@ -226,13 +226,13 @@ else {
         }
       }`);
     }
-    window.setTimeout(() => {
+    setTimeout(() => {
       for (const {e, val} of elements) {
         e.style['pointer-events'] = val;
         delete e.dataset.igblock;
       }
       elements = [];
-    });
+    }, 100);
   }, true);
 
   // unblock contextmenu and more
