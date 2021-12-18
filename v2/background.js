@@ -11,31 +11,62 @@ const notify = message => chrome.notifications.create({
 
 const onClicked = (tabId, obj) => chrome.tabs.executeScript(tabId, Object.assign({
   matchAboutBlank: true,
-  file: 'data/inject.js',
+  file: 'data/inject/core.js',
   runAt: 'document_start'
 }, obj), () => {
   const lastError = chrome.runtime.lastError;
   if (lastError) {
     console.warn(lastError);
-    alert(lastError.message);
-  }
-  else {
-    chrome.browserAction.setIcon({
-      tabId: tabId,
-      path: {
-        '16': 'data/icons/active/16.png',
-        '19': 'data/icons/active/19.png',
-        '32': 'data/icons/active/32.png',
-        '38': 'data/icons/active/38.png',
-        '48': 'data/icons/active/48.png',
-        '64': 'data/icons/active/64.png'
-      }
-    });
+    notify(lastError.message);
   }
 });
 chrome.browserAction.onClicked.addListener(tab => onClicked(tab.id, {
   allFrames: true
 }));
+
+
+chrome.runtime.onMessage.addListener((request, sender, response) => {
+  if (request.method === 'status') {
+    chrome.tabs.executeScript(sender.tab.id, {
+      runAt: 'document_start',
+      code: 'window.pointers.status'
+    }, r => response(r[0]));
+
+    return true;
+  }
+  else if (request.method === 'inject') {
+    if (sender.frameId === 0) {
+      chrome.browserAction.setIcon({
+        tabId: sender.tab.id,
+        path: {
+          '16': 'data/icons/active/16.png',
+          '32': 'data/icons/active/32.png',
+          '48': 'data/icons/active/48.png'
+        }
+      });
+    }
+    for (const file of request.files) {
+      chrome.tabs.executeScript(sender.tab.id, {
+        matchAboutBlank: true,
+        frameId: sender.frameId,
+        file: 'data/inject/' + file,
+        runAt: 'document_start'
+      });
+    }
+  }
+  else if (request.method === 'release') {
+    if (sender.frameId === 0) {
+      chrome.browserAction.setIcon({
+        tabId: sender.tab.id,
+        path: {
+          '16': 'data/icons/16.png',
+          '32': 'data/icons/32.png',
+          '48': 'data/icons/48.png'
+        }
+      });
+    }
+  }
+});
 
 // web navigation
 {
