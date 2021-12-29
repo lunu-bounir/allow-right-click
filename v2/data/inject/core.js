@@ -9,6 +9,7 @@
 // https://www.ploshtadslaveikov.com/reaktsii-za-statuyata-na-dayana-izobrazena-e-kato-nova-bogoroditsa-zashto/ -> text selection
 // https://everyhark.tistory.com/298 -> text selection
 // https://www.motofichas.com/marcas/benelli/leoncino-250 -> text selection
+// https://www.skidrowreloaded.com/ -> text selection
 
 window.pointers = window.pointers || {
   run: new Set(),
