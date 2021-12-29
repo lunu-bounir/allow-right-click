@@ -8,6 +8,7 @@
 // https://m.blog.naver.com/PostView.nhn?blogId=nurisejong&logNo=221050681781&targetKeyword=&targetRecommendationCode=1 -> text selection
 // https://www.ploshtadslaveikov.com/reaktsii-za-statuyata-na-dayana-izobrazena-e-kato-nova-bogoroditsa-zashto/ -> text selection
 // https://everyhark.tistory.com/298 -> text selection
+// https://www.motofichas.com/marcas/benelli/leoncino-250 -> text selection
 
 window.pointers = window.pointers || {
   run: new Set(),

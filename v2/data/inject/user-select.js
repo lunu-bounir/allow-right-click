@@ -8,15 +8,19 @@
           style['user-select'] = 'initial';
         }
       };
-      for (const rule of sheet.rules) {
+      const once = rule => {
         if (rule.style) {
           check(rule);
         }
         else if (rule.cssRules) {
           for (const r of rule.cssRules) {
-            check(r);
+            once(r);
           }
         }
+      };
+
+      for (const rule of sheet.rules) {
+        once(rule);
       }
     }
     catch (e) {}
@@ -27,6 +31,7 @@
         continue;
       }
       const node = sheet.ownerNode;
+
       if (node.tagName === 'STYLE' || node.tagName === 'LINK') {
         check.cache.set(sheet, true);
         clean(sheet);
