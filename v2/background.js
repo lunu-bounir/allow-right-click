@@ -151,7 +151,6 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (navigator.webdriver !== true) {
     const page = getManifest().homepage_url;
     const {name, version} = getManifest();
-    const sv = (Date.now() / 60000).toFixed(0).slice(-3);
     onInstalled.addListener(({reason, previousVersion}) => {
       management.getSelf(({installType}) => installType === 'normal' && storage.local.get({
         'faqs': true,
@@ -161,7 +160,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
           const doUpdate = (Date.now() - prefs['last-update']) / 1000 / 60 / 60 / 24 > 45;
           if (doUpdate && previousVersion !== version) {
             tabs.query({active: true, currentWindow: true}, tbs => tabs.create({
-              url: page + '?type=' + reason + (previousVersion ? '&p=' + previousVersion : '') + '&version=' + version + '#' + sv,
+              url: page + '?version=' + version + (previousVersion ? '&p=' + previousVersion : '') + '&type=' + reason,
               active: reason === 'install',
               ...(tbs && tbs.length && {index: tbs[0].index + 1})
             }));
