@@ -24,9 +24,20 @@ window.pointers.inject(`
         return ogs.removed ? ogs.misc.mp : () => {};
       },
       set(c) {
+        console.log('a try to overwrite "preventDefault"', c);
         ogs.misc.mp ||= c;
       }
     });
+    Object.defineProperty(MouseEvent.prototype, 'returnValue', {
+      get() {
+        return ogs.removed && 'v' in this ? this.v : true;
+      },
+      set(c) {
+        console.log('a try to overwrite "returnValue"', c);
+        this.v = c;
+      }
+    });
+
     ogs.misc.cp = ClipboardEvent.prototype.preventDefault;
     Object.defineProperty(ClipboardEvent.prototype, 'preventDefault', {
       get() {
@@ -52,6 +63,7 @@ window.pointers.inject(`
   document.addEventListener('copy', skip, true);
   document.addEventListener('paste', skip, true);
   document.addEventListener('contextmenu', skip, true);
+  document.addEventListener('mousedown', skip, true);
 
   window.pointers.run.add(() => {
     document.removeEventListener('dragstart', skip, true);
@@ -59,5 +71,6 @@ window.pointers.inject(`
     document.removeEventListener('copy', skip, true);
     document.removeEventListener('paste', skip, true);
     document.removeEventListener('contextmenu', skip, true);
+    document.removeEventListener('mousedown', skip, true);
   });
 }

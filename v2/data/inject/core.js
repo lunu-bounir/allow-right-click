@@ -10,6 +10,7 @@
 // https://everyhark.tistory.com/298 -> text selection
 // https://www.motofichas.com/marcas/benelli/leoncino-250 -> text selection
 // https://www.skidrowreloaded.com/ -> text selection
+// http://www.ciberespaciotv.com/p/ver-antena-3-en-directo-online.html -> context menu & text selection
 
 window.pointers = window.pointers || {
   run: new Set(),
