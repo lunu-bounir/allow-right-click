@@ -3,7 +3,7 @@
 <head>
   <title></title>
 </head>
-<body oncontextmenu="return false">
+<body oncontextmenu="return false;" onmousedown="return false;">
   <h1>Method 1 (overlay)</h1>
   <style>
     body {
@@ -56,6 +56,10 @@
       e.stopImmediatePropagation();
       e.preventDefault();
     });
+
+    window.addEventListener('contextmenu', (function(n) {
+        return (n = n || window.event).returnValue = !1, n.preventDefault(), !1;
+    }), !0);
   </script>
 
   <h1>Method 4 (pointer-events: none)</h1>
