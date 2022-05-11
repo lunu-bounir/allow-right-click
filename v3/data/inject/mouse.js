@@ -35,14 +35,6 @@
           nlfy(e);
         }
       }
-      // window.pointers.inject(`{
-      //   const es = document.elementsFromPoint(${e.clientX}, ${e.clientY});
-      //   for (const e of es) {
-      //     const c = e.oncontextmenu;
-      //     e.oncontextmenu = e => e.preventDefault = () => {};
-      //     setTimeout(() => e.oncontextmenu = c, 300);
-      //   }
-      // }`);
     }
     setTimeout(() => {
       for (const {e, val} of elements) {

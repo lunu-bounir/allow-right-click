@@ -1,7 +1,5 @@
 'use strict';
 
-const isFirefox = /Firefox/.test(navigator.userAgent) || typeof InstallTrigger !== 'undefined';
-
 const notify = message => chrome.notifications.create({
   title: chrome.runtime.getManifest().name,
   message,
@@ -9,34 +7,39 @@ const notify = message => chrome.notifications.create({
   iconUrl: 'data/icons/48.png'
 });
 
-const onClicked = (tabId, obj) => chrome.tabs.executeScript(tabId, Object.assign({
-  matchAboutBlank: true,
-  file: 'data/inject/core.js',
-  runAt: 'document_start'
-}, obj), () => {
+const onClicked = (tabId, obj) => chrome.scripting.executeScript({
+  target: {
+    tabId,
+    ...obj
+  },
+  files: ['data/inject/core.js']
+}, () => {
   const lastError = chrome.runtime.lastError;
   if (lastError) {
     console.warn(lastError);
     notify(lastError.message);
   }
 });
-chrome.browserAction.onClicked.addListener(tab => onClicked(tab.id, {
+chrome.action.onClicked.addListener(tab => onClicked(tab.id, {
   allFrames: true
 }));
 
 
 chrome.runtime.onMessage.addListener((request, sender, response) => {
   if (request.method === 'status') {
-    chrome.tabs.executeScript(sender.tab.id, {
-      runAt: 'document_start',
-      code: 'window.pointers.status'
-    }, r => response(r[0]));
+    chrome.scripting.executeScript({
+      target: {
+        tabId: sender.tab.id
+      },
+      func: () => window.pointers.status
+    }, r => response(r[0].result));
 
     return true;
   }
   else if (request.method === 'inject') {
+    console.log(sender.frameId);
     if (sender.frameId === 0) {
-      chrome.browserAction.setIcon({
+      chrome.action.setIcon({
         tabId: sender.tab.id,
         path: {
           '16': 'data/icons/active/16.png',
@@ -46,17 +49,18 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
       });
     }
     for (const file of request.files) {
-      chrome.tabs.executeScript(sender.tab.id, {
-        matchAboutBlank: true,
-        frameId: sender.frameId,
-        file: 'data/inject/' + file,
-        runAt: 'document_start'
+      chrome.scripting.executeScript({
+        target: {
+          tabId: sender.tab.id,
+          frameIds: [sender.frameId]
+        },
+        files: ['data/inject/' + file]
       });
     }
   }
   else if (request.method === 'release') {
     if (sender.frameId === 0) {
-      chrome.browserAction.setIcon({
+      chrome.action.setIcon({
         tabId: sender.tab.id,
         path: {
           '16': 'data/icons/16.png',
@@ -66,50 +70,66 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
       });
     }
   }
+  else if (request.method === 'inject-unprotected') {
+    chrome.scripting.executeScript({
+      target: {
+        tabId: sender.tab.id,
+        frameIds: [sender.frameId]
+      },
+      func: code => {
+        const script = document.createElement('script');
+        script.classList.add('arclck');
+        script.textContent = 'document.currentScript.dataset.injected = true;' + code;
+        document.documentElement.appendChild(script);
+        if (script.dataset.injected !== 'true') {
+          const s = document.createElement('script');
+          s.classList.add('arclck');
+          s.src = 'data:text/javascript;charset=utf-8;base64,' + btoa(code);
+          document.documentElement.appendChild(s);
+          script.remove();
+        }
+      },
+      args: [request.code],
+      world: 'MAIN'
+    });
+  }
+  else if (request.method === 'simulate-click') {
+    onClicked(sender.tab.id, {
+      frameIds: [sender.frameId]
+    });
+  }
 });
 
-// web navigation
+// automation
 {
-  const cache = {};
-  chrome.tabs.onRemoved.addListener(tabId => delete cache[tabId]);
+  const observe = () => chrome.storage.local.get({
+    monitor: false,
+    hostnames: []
+  }, async prefs => {
+    await chrome.scripting.unregisterContentScripts({
+      ids: ['monitor']
+    }).catch(() => {});
 
-  const onCommitted = d => {
-    if (d.frameId === 0) {
-      const {hostname} = new URL(d.url);
-      cache[d.tabId] = localStorage.getItem('hostname:' + hostname) === 'true';
-    }
-    if (cache[d.tabId]) {
-      onClicked(d.tabId, {
-        frameId: d.frameId
-      });
-    }
-  };
-  const callback = () => chrome.storage.local.get({
-    monitor: false
-  }, prefs => {
-    const method = isFirefox ? 'onDOMContentLoaded' : 'onCommitted';
-    if (chrome.webNavigation) {
-      chrome.webNavigation[method].removeListener(onCommitted);
-      if (prefs.monitor) {
-        chrome.webNavigation[method].addListener(onCommitted, {
-          url: [{
-            urlPrefix: 'http://'
-          }, {
-            urlPrefix: 'https://'
-          }]
-        });
-      }
-    }
-    else {
-      chrome.storage.local.set({
-        monitor: false
-      });
+    if (prefs.monitor && prefs.hostnames.length) {
+      chrome.scripting.registerContentScripts([{
+        allFrames: true,
+        runAt: 'document_start',
+        id: 'monitor',
+        js: ['/data/monitor.js'],
+        matches: prefs.hostnames.map(h => ['*://' + h + '/*', '*://*.' + h + '/*']).flat()
+      }]);
     }
   });
-  callback();
+  observe();
   chrome.storage.onChanged.addListener(prefs => {
-    if (prefs.monitor && prefs.monitor.newValue !== prefs.monitor.oldValue) {
-      callback();
+    if (
+      (prefs.monitor && prefs.monitor.newValue !== prefs.monitor.oldValue) ||
+      (prefs.hostnames && prefs.hostnames.newValue !== prefs.hostnames.oldValue)
+    ) {
+      observe();
+    }
+    if (prefs.monitor) {
+      permission();
     }
   });
 }
@@ -130,12 +150,12 @@ const permission = () => chrome.permissions.contains({
     chrome.contextMenus.create({
       id: 'add-to-whitelist',
       title: 'Automatically Activate this Extension on this Hostname',
-      contexts: ['browser_action']
+      contexts: ['action']
     });
     chrome.contextMenus.create({
       id: 'inject-sub',
       title: 'Unblock Sub-Frame Elements',
-      contexts: ['browser_action']
+      contexts: ['action']
     }, permission);
   };
   chrome.runtime.onInstalled.addListener(callback);
@@ -151,17 +171,28 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     const url = tab.url || info.pageUrl;
     if (url.startsWith('http')) {
       const {hostname} = new URL(url);
-      localStorage.setItem('hostname:' + hostname, true);
-      if (chrome.webNavigation) {
+      chrome.storage.local.get({
+        hostnames: []
+      }, prefs => {
         chrome.storage.local.set({
-          monitor: true
+          hostnames: [...prefs.hostnames, hostname].filter((s, i, l) => s && l.indexOf(s) === i)
         });
-        notify(`"${hostname}" is added to the list`);
-      }
-      else {
-        notify('For this feature to work, you need to enable "webNavigation" permission from the options page');
-        setTimeout(() => chrome.runtime.openOptionsPage(), 3000);
-      }
+      });
+
+      chrome.permissions.contains({
+        origins: ['*://*/*']
+      }, granted => {
+        if (granted) {
+          chrome.storage.local.set({
+            monitor: true
+          });
+          notify(`"${hostname}" is added to the list`);
+        }
+        else {
+          notify('For this feature to work, you need to enable host permission from the options page');
+          setTimeout(() => chrome.runtime.openOptionsPage(), 3000);
+        }
+      });
     }
     else {
       notify('this is not a valid URL');

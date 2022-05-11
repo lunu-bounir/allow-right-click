@@ -12,10 +12,10 @@
 // https://www.skidrowreloaded.com/ -> text selection
 // http://www.ciberespaciotv.com/p/ver-antena-3-en-directo-online.html -> context menu & text selection
 // https://soap2day.film/movie/a-special-lady-92zon/1-full -> right-click on movie (requires sub-frame access)
+// https://www.taiwanratings.com/portal/front/listSpRating -> Ctrl + C on Windows
 
 window.pointers = window.pointers || {
   run: new Set(),
-  scripts: new Set(),
   cache: new Map(),
   status: ''
 };
@@ -24,32 +24,17 @@ window.pointers.record = (e, name, value) => {
   window.pointers.cache.set(e, {name, value});
 };
 
-window.pointers.inject = code => {
-  const script = document.createElement('script');
-  script.textContent = 'document.currentScript.dataset.injected = true;' + code;
-  document.documentElement.appendChild(script);
-  script.remove();
-  if (script.dataset.injected !== 'true') {
-    const s = document.createElement('script');
-    s.src = 'data:text/javascript;charset=utf-8;base64,' + btoa(code);
-    s.onload = () => s.remove();
-    document.documentElement.appendChild(s);
-
-    window.pointers.scripts.add(s);
-    return s;
-  }
-  else {
-    window.pointers.scripts.add(script);
-    return script;
-  }
-};
+window.pointers.inject = code => chrome.runtime.sendMessage({
+  method: 'inject-unprotected',
+  code
+});
 
 {
   const next = () => {
     if (window.pointers.status === '' || window.pointers.status === 'removed') {
       window.pointers.status = 'ready';
 
-      for (const script of window.pointers.scripts) {
+      for (const script of [...document.querySelectorAll('script.arclck')]) {
         script.dispatchEvent(new Event('install'));
       }
 
@@ -75,7 +60,7 @@ window.pointers.inject = code => {
       }
       window.pointers.run = new Set();
 
-      for (const script of window.pointers.scripts) {
+      for (const script of [...document.querySelectorAll('script.arclck')]) {
         script.dispatchEvent(new Event('remove'));
       }
 

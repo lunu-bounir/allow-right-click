@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "version": "0.5.1",
+  "name": "Allow Right-Click",
+  "description": "Re-enable the possibility to use the context menu, copy, paste, and text selection on sites that prevent them",
+  "icons": {
+    "16": "data/icons/16.png",
+    "32": "data/icons/32.png",
+    "48": "data/icons/48.png",
+    "64": "data/icons/64.png",
+    "128": "data/icons/128.png",
+    "256": "data/icons/256.png",
+    "512": "data/icons/512.png"
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "contextMenus",
+    "notifications"
+  ],
+  "optional_host_permissions": [
+    "*://*/*"
+  ],
+  "action": {},
+  "homepage_url": "https://add0n.com/allow-right-click.html",
+  "background": {
+    "service_worker": "worker.js"
+  },
+  "options_ui": {
+    "page": "data/options/index.html",
+    "open_in_tab": false
+  },
+  "commands": {
+    "_execute_action": {
+      "description": "Press the action button"
+    }
+  }
+}

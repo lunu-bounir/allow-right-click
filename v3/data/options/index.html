@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="index.css">
+  </head>
+
+  <body>
+    Automatically activate the extension on the following hostnames (comma-separated list of hostnames):
+    <textarea id="whitelist" rows="6" placeholder="e.g.: www.google.com, www.bing.com" disabled></textarea>
+
+
+    <p class="table">
+      <input type="checkbox" id="hostaccess">
+      <label for="hostaccess">Allow the extension to use the "host" permission to monitor and inject unblocker script automatically</label>
+      <input type="checkbox" id="faqs">
+      <label for="faqs">Open FAQs page on updates</label>
+    </p>
+
+    <div id="explore"></div>
+    <p>
+      <input type="button" id="support" value="Support Development">
+      <input type="button" id="reset" value="Factory Reset"/>
+    </p>
+    <p>
+      <input type="button" id="save" value="Save Options"/>
+      <span id="toast"></span>
+    </p>
+    <script type="text/javascript" src="index.js"></script>
+    <script async type="text/javascript" src="matched.js"></script>
+  </body>
+</html>
