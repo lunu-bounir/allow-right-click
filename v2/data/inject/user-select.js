@@ -97,3 +97,19 @@
     }
   });
 }
+// user-select (JS)
+// window.pointers.inject(`
+//   try {
+//     let active = true;
+
+//     Selection.prototype.removeAllRanges = new Proxy(Selection.prototype.removeAllRanges, {
+//       apply(target, self, args) {
+//         return active ? undefined : Reflect.apply(target, self, args);
+//       }
+//     });
+
+//     document.currentScript.addEventListener('remove', () => active = false);
+//     document.currentScript.addEventListener('install', () => active = true);
+//   }
+//   catch (e) {}
+// `);

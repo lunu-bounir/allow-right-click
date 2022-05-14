@@ -13,6 +13,7 @@
 // http://www.ciberespaciotv.com/p/ver-antena-3-en-directo-online.html -> context menu & text selection
 // https://soap2day.film/movie/a-special-lady-92zon/1-full -> right-click on movie (requires sub-frame access)
 // https://www.taiwanratings.com/portal/front/listSpRating -> Ctrl + C on Windows
+// https://www.yuanta.com.tw/eYuanta/securities/Node/Index?MainId=00412&C1=2018040407582803&C2=2018040401231916&ID=2018040401231916&Level=2&rnd=28994 -> select a large portion of the table
 
 window.pointers = window.pointers || {
   run: new Set(),
