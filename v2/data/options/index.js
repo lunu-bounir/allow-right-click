@@ -81,3 +81,19 @@ document.getElementById('webNavigation').onchange = e => {
     document.getElementById('whitelist').disabled = true;
   }
 };
+document.getElementById('subframe').onclick = () => {
+  chrome.permissions.request({
+    origins: ['*://*/*']
+  }, granted => {
+    const lastError = chrome.runtime.lastError;
+
+    if (lastError) {
+      toast.textContent = lastError.message;
+      window.setTimeout(() => toast.textContent = '', 750);
+    }
+    else {
+      toast.textContent = granted ? 'Permission granted' : 'Permission denied';
+      window.setTimeout(() => toast.textContent = '', 750);
+    }
+  });
+};

@@ -86,3 +86,17 @@ document.getElementById('hostaccess').onchange = e => {
     document.getElementById('whitelist').disabled = true;
   }
 };
+document.getElementById('subframe').onclick = () => {
+  chrome.permissions.request({
+    origins: ['*://*/*']
+  }, granted => {
+    const lastError = chrome.runtime.lastError;
+
+    if (lastError) {
+      notify(lastError.message);
+    }
+    else {
+      notify(granted ? 'Permission granted' : 'Permission denied');
+    }
+  });
+};

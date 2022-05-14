@@ -54,4 +54,5 @@ input[type=button]:disabled {
   display: grid;
   grid-template-columns: min-content 1fr;
   grid-gap: 5px;
+  align-items: start;
 }
