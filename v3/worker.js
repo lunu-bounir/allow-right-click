@@ -1,4 +1,4 @@
-'use strict';
+/* global URLPattern */
 
 const notify = message => chrome.notifications.create({
   title: chrome.runtime.getManifest().name,
@@ -37,7 +37,6 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
     return true;
   }
   else if (request.method === 'inject') {
-    console.log(sender.frameId);
     if (sender.frameId === 0) {
       chrome.action.setIcon({
         tabId: sender.tab.id,
@@ -111,13 +110,33 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
     }).catch(() => {});
 
     if (prefs.monitor && prefs.hostnames.length) {
-      chrome.scripting.registerContentScripts([{
-        allFrames: true,
-        runAt: 'document_start',
-        id: 'monitor',
-        js: ['/data/monitor.js'],
-        matches: prefs.hostnames.map(h => ['*://' + h + '/*', '*://*.' + h + '/*']).flat()
-      }]);
+      const matches = [];
+      for (const hostname of prefs.hostnames) {
+        try {
+          new URLPattern('*://' + hostname + '/*');
+          matches.push('*://' + hostname + '/*');
+        }
+        catch (e) {
+          console.warn(hostname, 'rule is ignored / 1');
+        }
+        try {
+          new URLPattern('*://*.' + hostname + '/*');
+          matches.push('*://*.' + hostname + '/*');
+        }
+        catch (e) {
+          console.warn(hostname, 'rule is ignored / 2');
+        }
+      }
+      if (matches.length) {
+        chrome.scripting.registerContentScripts([{
+          allFrames: true,
+          matchOriginAsFallback: true,
+          runAt: 'document_start',
+          id: 'monitor',
+          js: ['/data/monitor.js'],
+          matches
+        }]);
+      }
     }
   });
   observe();
@@ -195,7 +214,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       });
     }
     else {
-      notify('this is not a valid URL');
+      notify('This is not a valid URL: ' + url);
     }
   }
 });
