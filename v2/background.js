@@ -137,12 +137,23 @@ const permission = () => chrome.permissions.contains({
       title: 'Unblock Sub-Frame Elements',
       contexts: ['browser_action']
     }, permission);
+    chrome.contextMenus.create({
+      id: 'test',
+      title: 'Test Right-Click',
+      contexts: ['browser_action']
+    });
   };
   chrome.runtime.onInstalled.addListener(callback);
   chrome.runtime.onStartup.addListener(callback);
 }
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === 'inject-sub') {
+  if (info.menuItemId === 'test') {
+    chrome.tabs.create({
+      url: 'https://webbrowsertools.com/test-right-click',
+      index: tab.index + 1
+    });
+  }
+  else if (info.menuItemId === 'inject-sub') {
     chrome.permissions.request({
       origins: ['*://*/*']
     }, permission);
