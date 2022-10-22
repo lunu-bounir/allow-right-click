@@ -108,32 +108,40 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
     await chrome.scripting.unregisterContentScripts();
 
     if (prefs.monitor && prefs.hostnames.length) {
-      const matches = [];
+      const matches = new Set();
       for (const hostname of prefs.hostnames) {
-        try {
-          new URLPattern('*://' + hostname + '/*');
-          matches.push('*://' + hostname + '/*');
+        if (hostname.includes('*')) {
+          matches.add(hostname);
         }
-        catch (e) {
-          console.warn(hostname, 'rule is ignored / 1');
-        }
-        try {
-          new URLPattern('*://*.' + hostname + '/*');
-          matches.push('*://*.' + hostname + '/*');
-        }
-        catch (e) {
-          console.warn(hostname, 'rule is ignored / 2');
+        else {
+          matches.add(hostname);
+          matches.add(hostname);
         }
       }
-      if (matches.length) {
+      for (let m of matches) {
+        if (m.includes(':') === false) {
+          m = '*://' + m;
+        }
+        if (m.endsWith('*') === false) {
+          if (m.endsWith('/')) {
+            m += '*';
+          }
+          else {
+            m += '/*';
+          }
+        }
+        console.log(m);
         chrome.scripting.registerContentScripts([{
           allFrames: true,
           matchOriginAsFallback: true,
           runAt: 'document_start',
-          id: 'monitor',
+          id: 'monitor-' + Math.random(),
           js: ['/data/monitor.js'],
-          matches
-        }]);
+          matches: [m]
+        }]).catch(e => {
+          console.error(e);
+          notify(`Cannot use the following automation rule: ${m}:` + e.message);
+        });
       }
     }
   });

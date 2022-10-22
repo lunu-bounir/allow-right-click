@@ -20,7 +20,7 @@ document.getElementById('save').addEventListener('click', () => {
     s = s.trim();
     if (s && s.startsWith('http')) {
       try {
-        return (new URL(s)).hostname;
+        return (new URL(s)).origin;
       }
       catch (e) {
         console.log(e);
@@ -100,3 +100,10 @@ document.getElementById('subframe').onclick = () => {
     }
   });
 };
+
+// links
+for (const a of [...document.querySelectorAll('[data-href]')]) {
+  if (a.hasAttribute('href') === false) {
+    a.href = chrome.runtime.getManifest().homepage_url + '#' + a.dataset.href;
+  }
+}
