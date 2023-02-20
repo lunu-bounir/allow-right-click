@@ -1,10 +1,10 @@
-/* global URLPattern */
+const g = id => chrome.i18n.getMessage(id);
 
 const notify = message => chrome.notifications.create({
   title: chrome.runtime.getManifest().name,
   message,
   type: 'basic',
-  iconUrl: 'data/icons/48.png'
+  iconUrl: '/data/icons/48.png'
 });
 
 const onClicked = (tabId, obj) => chrome.scripting.executeScript({
@@ -12,7 +12,7 @@ const onClicked = (tabId, obj) => chrome.scripting.executeScript({
     tabId,
     ...obj
   },
-  files: ['data/inject/core.js']
+  files: ['/data/inject/core.js']
 }, () => {
   const lastError = chrome.runtime.lastError;
   if (lastError) {
@@ -41,9 +41,9 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
       chrome.action.setIcon({
         tabId: sender.tab.id,
         path: {
-          '16': 'data/icons/active/16.png',
-          '32': 'data/icons/active/32.png',
-          '48': 'data/icons/active/48.png'
+          '16': '/data/icons/active/16.png',
+          '32': '/data/icons/active/32.png',
+          '48': '/data/icons/active/48.png'
         }
       });
     }
@@ -53,7 +53,7 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
           tabId: sender.tab.id,
           frameIds: [sender.frameId]
         },
-        files: ['data/inject/' + file]
+        files: ['/data/inject/' + file]
       });
     }
   }
@@ -62,9 +62,9 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
       chrome.action.setIcon({
         tabId: sender.tab.id,
         path: {
-          '16': 'data/icons/16.png',
-          '32': 'data/icons/32.png',
-          '48': 'data/icons/48.png'
+          '16': '/data/icons/16.png',
+          '32': '/data/icons/32.png',
+          '48': '/data/icons/48.png'
         }
       });
     }
@@ -130,7 +130,6 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
             m += '/*';
           }
         }
-        console.log(m);
         chrome.scripting.registerContentScripts([{
           allFrames: true,
           matchOriginAsFallback: true,
@@ -140,7 +139,7 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
           matches: [m]
         }]).catch(e => {
           console.error(e);
-          notify(`Cannot use the following automation rule: ${m}:` + e.message);
+          notify(g('bg_e_1') + `: ${m}:` + e.message);
         });
       }
     }
@@ -165,7 +164,7 @@ const permission = () => chrome.permissions.contains({
 }, granted => {
   chrome.contextMenus.update('inject-sub', {
     enabled: granted === false,
-    title: 'Unblock Sub-Frame Elements' + (granted ? ' (already has access)' : '')
+    title: g('bg_context_1') + (granted ? ' ' + g('bg_context_2') : '')
   });
 });
 
@@ -174,17 +173,17 @@ const permission = () => chrome.permissions.contains({
   const callback = () => {
     chrome.contextMenus.create({
       id: 'add-to-whitelist',
-      title: 'Automatically Activate this Extension on this Hostname',
+      title: g('bg_context_3'),
       contexts: ['action']
     });
     chrome.contextMenus.create({
       id: 'inject-sub',
-      title: 'Unblock Sub-Frame Elements',
+      title: g('bg_context_4'),
       contexts: ['action']
     }, permission);
     chrome.contextMenus.create({
       id: 'test',
-      title: 'Test Right-Click',
+      title: g('bg_context_5'),
       contexts: ['action']
     });
   };
@@ -225,13 +224,13 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
           notify(`"${hostname}" is added to the list`);
         }
         else {
-          notify('For this feature to work, you need to enable host permission from the options page');
+          notify(g('bg_msg_1'));
           setTimeout(() => chrome.runtime.openOptionsPage(), 3000);
         }
       });
     }
     else {
-      notify('This is not a valid URL: ' + url);
+      notify(g('bg_e_2') + ': ' + url);
     }
   }
 });

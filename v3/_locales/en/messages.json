@@ -1,0 +1,29 @@
+{
+  "description": {
+    "message": "Re-enable the possibility to use the context menu, copy, paste, and text selection on sites that prevent them."
+  },
+  "bg_e_1": {
+    "message": "Cannot use the following automation rule"
+  },
+  "bg_context_1": {
+    "message": "Unblock Sub-Frame Elements"
+  },
+  "bg_context_2": {
+    "message": "(already has access)"
+  },
+  "bg_context_3": {
+    "message": "Automatically Activate this Extension on this Hostname"
+  },
+  "bg_context_4": {
+    "message": "Unblock Sub-Frame Elements"
+  },
+  "bg_context_5": {
+    "message": "Test Right-Click"
+  },
+  "bg_msg_1": {
+    "message": "For this feature to work, you need to enable host permission from the options page"
+  },
+  "bg_e_2": {
+    "message": "This is not a valid URL"
+  }
+}

@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "version": "0.5.5",
+  "version": "0.5.6",
+  "default_locale": "en",
   "name": "Allow Right-Click",
-  "description": "Re-enable the possibility to use the context menu, copy, paste, and text selection on sites that prevent them",
+  "description": "__MSG_description__",
   "icons": {
     "16": "data/icons/16.png",
     "32": "data/icons/32.png",
@@ -23,17 +24,14 @@
     "*://*/*"
   ],
   "action": {},
-  "homepage_url": "https://add0n.com/allow-right-click.html",
+  "homepage_url": "https://webextension.org/listing/allow-right-click.html",
   "background": {
     "service_worker": "worker.js"
   },
   "options_ui": {
-    "page": "data/options/index.html",
-    "open_in_tab": false
+    "page": "data/options/index.html"
   },
   "commands": {
-    "_execute_action": {
-      "description": "Press the action button"
-    }
+    "_execute_action": {}
   }
 }

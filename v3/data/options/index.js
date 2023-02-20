@@ -23,7 +23,7 @@ document.getElementById('save').addEventListener('click', () => {
         return (new URL(s)).origin;
       }
       catch (e) {
-        console.log(e);
+        console.error(e);
         return '';
       }
     }

@@ -10,7 +10,7 @@ window.pointers.inject(`
     ogs.misc.alert = window.alert;
     Object.defineProperty(window, 'alert', {
       get() {
-        return ogs.removed ? ogs.misc.alert : (...args) => console.log('[alert is blocked]', ...args);
+        return ogs.removed ? ogs.misc.alert : (...args) => console.info('[alert is blocked]', ...args);
       },
       set(c) {
         ogs.misc.alert ||= c;
@@ -24,7 +24,7 @@ window.pointers.inject(`
         return ogs.removed ? ogs.misc.mp : () => {};
       },
       set(c) {
-        console.log('a try to overwrite "preventDefault"', c);
+        console.info('a try to overwrite "preventDefault"', c);
         ogs.misc.mp ||= c;
       }
     });
@@ -33,7 +33,7 @@ window.pointers.inject(`
         return ogs.removed && 'v' in this ? this.v : true;
       },
       set(c) {
-        console.log('a try to overwrite "returnValue"', c);
+        console.info('a try to overwrite "returnValue"', c);
         this.v = c;
       }
     });
