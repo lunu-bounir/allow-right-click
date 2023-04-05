@@ -1,11 +1,16 @@
 {
   "manifest_version": 3,
-  "version": "0.5.6",
+  "version": "0.5.7",
   "default_locale": "en",
   "name": "Allow Right-Click",
+  "short_name": "Allow Right-Click",
+  "author": "Lunu Bounir",
+  "minimum_chrome_version": "88",
+  "offline_enabled": true,
   "description": "__MSG_description__",
   "icons": {
     "16": "data/icons/16.png",
+    "24": "data/icons/24.png",
     "32": "data/icons/32.png",
     "48": "data/icons/48.png",
     "64": "data/icons/64.png",
@@ -23,7 +28,17 @@
   "optional_host_permissions": [
     "*://*/*"
   ],
-  "action": {},
+  "action": {
+    "default_icon": {
+      "16": "data/icons/16.png",
+      "19": "data/icons/19.png",
+      "32": "data/icons/32.png",
+      "38": "data/icons/38.png",
+      "48": "data/icons/48.png",
+      "64": "data/icons/64.png"
+    },
+    "default_title": "Allow Right-Click"
+  },
   "homepage_url": "https://webextension.org/listing/allow-right-click.html",
   "background": {
     "service_worker": "worker.js"
