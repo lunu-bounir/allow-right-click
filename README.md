@@ -1,4 +1,4 @@
-## Allow Right-Click
+## Allow Right-Click <img src="https://raw.githubusercontent.com/Alex313031/allow-right-click/master/v3/data/icons/256.png" width="48">
 
 A browser extension to re-enable the possibility to use the context menu, copy, paste, and text selection on sites that prevent them.
 
