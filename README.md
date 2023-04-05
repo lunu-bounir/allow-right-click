@@ -22,7 +22,7 @@ Please go to
 
 ## Screenshots
 
-![img](https://addons.mozilla.org/user-media/previews/thumbs/204/204562.jpg?modified=1622133461)
+![img](https://raw.githubusercontent.com/Alex313031/allow-right-click/master/promo.jpg)
 
 ## Directories
 
