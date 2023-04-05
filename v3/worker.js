@@ -42,8 +42,11 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
         tabId: sender.tab.id,
         path: {
           '16': '/data/icons/active/16.png',
+          '19': '/data/icons/active/19.png',
           '32': '/data/icons/active/32.png',
-          '48': '/data/icons/active/48.png'
+          '38': '/data/icons/active/38.png',
+          '48': '/data/icons/active/48.png',
+          '64': '/data/icons/active/64.png'
         }
       });
     }
@@ -63,8 +66,11 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
         tabId: sender.tab.id,
         path: {
           '16': '/data/icons/16.png',
+          '19': '/data/icons/19.png',
           '32': '/data/icons/32.png',
-          '48': '/data/icons/48.png'
+          '38': '/data/icons/38.png',
+          '48': '/data/icons/48.png',
+          '64': '/data/icons/64.png'
         }
       });
     }
