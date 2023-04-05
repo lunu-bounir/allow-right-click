@@ -5,6 +5,7 @@
   "name": "Allow Right-Click",
   "short_name": "Allow Right-Click",
   "author": "Lunu Bounir",
+  "homepage_url": "https://webextension.org/listing/allow-right-click.html",
   "minimum_chrome_version": "88",
   "offline_enabled": true,
   "description": "__MSG_description__",
@@ -39,7 +40,6 @@
     },
     "default_title": "Allow Right-Click"
   },
-  "homepage_url": "https://webextension.org/listing/allow-right-click.html",
   "background": {
     "service_worker": "worker.js"
   },
