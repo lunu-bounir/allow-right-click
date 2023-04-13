@@ -18,7 +18,8 @@ input[type=button] {
 select,
 button,
 textarea,
-input {
+input[type=submit],
+input[type=button] {
   border: solid 1px rgba(0, 0, 0, 0.25);
 }
 textarea {
@@ -42,6 +43,7 @@ input[type=number]:focus {
 a,
 a:visited {
   color: #07c;
+  text-decoration: none;
 }
 textarea:disabled {
   opacity: 0.4;
@@ -54,5 +56,5 @@ input[type=button]:disabled {
   display: grid;
   grid-template-columns: min-content 1fr;
   grid-gap: 5px;
-      align-items: start;
+  align-items: center;
 }

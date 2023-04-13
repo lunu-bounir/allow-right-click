@@ -1,17 +1,17 @@
 {
   "manifest_version": 3,
-  "version": "0.5.6",
+  "version": "0.5.7",
   "default_locale": "en",
   "name": "Allow Right-Click",
   "description": "__MSG_description__",
   "icons": {
-    "16": "data/icons/16.png",
-    "32": "data/icons/32.png",
-    "48": "data/icons/48.png",
-    "64": "data/icons/64.png",
-    "128": "data/icons/128.png",
-    "256": "data/icons/256.png",
-    "512": "data/icons/512.png"
+    "16": "/data/icons/16.png",
+    "32": "/data/icons/32.png",
+    "48": "/data/icons/48.png",
+    "64": "/data/icons/64.png",
+    "128": "/data/icons/128.png",
+    "256": "/data/icons/256.png",
+    "512": "/data/icons/512.png"
   },
   "permissions": [
     "storage",
@@ -29,7 +29,7 @@
     "service_worker": "worker.js"
   },
   "options_ui": {
-    "page": "data/options/index.html"
+    "page": "/data/options/index.html"
   },
   "commands": {
     "_execute_action": {}

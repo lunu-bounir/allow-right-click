@@ -7,8 +7,8 @@
 </head>
 
 <body>
-  Automatically activate the extension on the following hostnames (<a data-href="faq8" target="_blank">comma-separated list of hostnames</a>):
-  <textarea id="whitelist" rows="8" placeholder="Supported Formats:
+  <p><a data-href="faq8" target="_blank">Automatically activate</a> the extension on the following hostnames:</p>
+  <textarea id="whitelist" rows="8" placeholder="Comma-separated list of hostnames. Supported Formats:
 
 example.com
 www.example.com
@@ -20,7 +20,9 @@ http://example.com
 
   <p class="table">
     <input type="checkbox" id="hostaccess">
-    <label for="hostaccess">Allow the extension to use the "host" permission to monitor and inject unblocker script automatically</label>
+    <label for="hostaccess">"host" permission</label>
+    <span></span>
+    <span>Allow the extension to use the "host" permission to monitor and inject unblocker script automatically</span>
     <input type="checkbox" id="faqs">
     <label for="faqs">Open FAQs page on updates</label>
   </p>
@@ -34,7 +36,7 @@ http://example.com
     <span id="toast"></span>
   </p>
   <p>
-    <input type="button" id="subframe" value="Cross-Origin Frame Access"/>
+    <input type="button" id="subframe" value="Allow Cross-Origin Frame Access"/>
     <div>To unblock the right-click access on cross-origin frames, allow this permission.</div>
   </p>
   <script type="text/javascript" src="index.js"></script>

@@ -9,9 +9,9 @@
     e.stopPropagation();
 
     // what if element is not clickable
-    [...e.target.querySelectorAll('img,video')].forEach(e => {
-      e.style.setProperty('pointer-events', 'all', 'important');
-    });
+    for (const mv of (e.target.parentElement || e.target).querySelectorAll('img,video')) {
+      mv.style.setProperty('pointer-events', 'all', 'important');
+    }
     const es = document.elementsFromPoint(e.clientX, e.clientY);
 
     const imgs = es.filter(e => e.src && e.tagName !== 'VIDEO');
@@ -28,7 +28,7 @@
 
     if (imgs.length || vids.length) {
       for (const e of es) {
-        if (vids.length ? vids.indexOf(e) !== -1 : imgs.indexOf(e) !== -1) {
+        if (vids.length ? vids.includes(e) : imgs.includes(e)) {
           break;
         }
         else {
