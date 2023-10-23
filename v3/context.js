@@ -5,7 +5,7 @@
       id: 'add-to-whitelist',
       title: g('bg_context_3'),
       contexts: ['action']
-    }, () => chrome.runtime.lastError);
+    });
     chrome.contextMenus.create({
       id: 'inject-sub',
       title: g('bg_context_4'),
@@ -18,10 +18,9 @@
       id: 'test',
       title: g('bg_context_5'),
       contexts: ['action']
-    }, () => chrome.runtime.lastError);
+    });
   };
   chrome.runtime.onInstalled.addListener(callback);
-  chrome.runtime.onStartup.addListener(callback);
 }
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === 'test') {

@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>Options Page :: Allow Right-Click</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" type="text/css" href="index.css">
 </head>
 
 <body>
-  <p><a data-href="faq8" target="_blank">Automatically activate</a> the extension on the following hostnames:</p>
-  <textarea id="whitelist" rows="8" placeholder="Comma-separated list of hostnames. Supported Formats:
+  <p>
+    <a data-href="faq8" target="_blank">Automatically activate</a> the extension on the following hostnames. If the box is disabled, use the "Allow Cross-Origin Frame Access" button to grant the permission.
+  </p>
+  <textarea id="whitelist" rows="12" placeholder="Comma-separated list of hostnames. Supported Formats:
 
 example.com
 www.example.com
@@ -17,27 +20,24 @@ http://example.com
 *://*.example.com/*
 " disabled></textarea>
 
-
   <p class="table">
     <input type="checkbox" id="hostaccess">
     <label for="hostaccess">"host" permission</label>
-    <span></span>
-    <span>Allow the extension to use the "host" permission to monitor and inject unblocker script automatically</span>
-    <input type="checkbox" id="faqs">
-    <label for="faqs">Open FAQs page on updates</label>
   </p>
+  <div class="note">Allow the extension to use the "host" permission to monitor and inject unblocker script automatically</div>
 
+  <p>
+    <input type="button" id="subframe" value="Allow Cross-Origin Frame Access"/>
+    <div class="note">To unblock the right-click access on cross-origin frames, allow this permission.</div>
+  </p>
   <p>
     <input type="button" id="support" value="Support Development">
     <input type="button" id="reset" value="Factory Reset"/>
   </p>
   <p>
+    <input type="button" id="home" value="Homepage"/>
     <input type="button" id="save" value="Save Options"/>
     <span id="toast"></span>
-  </p>
-  <p>
-    <input type="button" id="subframe" value="Allow Cross-Origin Frame Access"/>
-    <div>To unblock the right-click access on cross-origin frames, allow this permission.</div>
   </p>
   <script type="text/javascript" src="index.js"></script>
 </body>

@@ -8,10 +8,8 @@ const notify = msg => {
 };
 
 chrome.storage.local.get({
-  'faqs': true,
   'hostnames': []
 }, prefs => {
-  document.getElementById('faqs').checked = prefs.faqs;
   document.getElementById('whitelist').value = prefs.hostnames.join(', ');
 });
 
@@ -32,7 +30,6 @@ document.getElementById('save').addEventListener('click', () => {
 
   chrome.storage.local.set({
     'monitor': hostnames.length > 0,
-    'faqs': document.getElementById('faqs').checked,
     hostnames
   });
   document.getElementById('whitelist').value = hostnames.join(', ');
@@ -58,12 +55,14 @@ document.getElementById('support').addEventListener('click', () => chrome.tabs.c
 }));
 
 //
-chrome.permissions.contains({
+const check = () => chrome.permissions.contains({
   origins: ['*://*/*']
 }, granted => {
   document.getElementById('whitelist').disabled = granted === false;
   document.getElementById('hostaccess').checked = granted;
 });
+check();
+
 document.getElementById('hostaccess').onchange = e => {
   if (e.target.checked) {
     chrome.permissions.request({
@@ -80,6 +79,8 @@ document.getElementById('hostaccess').onchange = e => {
       chrome.storage.local.set({
         monitor: granted
       });
+
+      check();
     });
   }
   else {
@@ -98,6 +99,7 @@ document.getElementById('subframe').onclick = () => {
     else {
       notify(granted ? 'Permission granted' : 'Permission denied');
     }
+    check();
   });
 };
 
@@ -107,3 +109,8 @@ for (const a of [...document.querySelectorAll('[data-href]')]) {
     a.href = chrome.runtime.getManifest().homepage_url + '#' + a.dataset.href;
   }
 }
+
+// home
+document.getElementById('home').onclick = () => chrome.tabs.create({
+  url: chrome.runtime.getManifest().homepage_url
+});

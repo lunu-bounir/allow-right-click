@@ -9,10 +9,10 @@ const notify = message => chrome.notifications.create({
   iconUrl: '/data/icons/48.png'
 });
 
-const onClicked = (tabId, obj) => chrome.scripting.executeScript({
+const onClicked = (tabId, properties = {}) => chrome.scripting.executeScript({
   target: {
     tabId,
-    ...obj
+    ...properties
   },
   files: ['/data/inject/core.js']
 }, () => {

@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "version": "0.5.7",
+  "version": "0.5.8",
   "default_locale": "en",
   "name": "Allow Right-Click",
   "description": "__MSG_description__",
@@ -29,6 +29,7 @@
     "service_worker": "worker.js"
   },
   "options_ui": {
+    "open_in_tab": true,
     "page": "/data/options/index.html"
   },
   "commands": {
