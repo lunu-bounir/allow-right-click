@@ -1,15 +1,19 @@
 // find the correct element
 {
-  let elements = [];
+  const elements = new Map();
 
-  const mousedonw = e => {
-    if (e.button !== 2) {
-      return;
+  const revert = () => {
+    for (const [e, val] of elements) {
+      e.style['pointer-events'] = val;
+      delete e.dataset.igblock;
     }
-    e.stopPropagation();
+    elements.clear();
+  };
 
+  const unblock = e => {
     // what if element is not clickable
     for (const mv of (e.target.parentElement || e.target).querySelectorAll('img,video')) {
+      elements.set(mv, mv.style['pointer-events']);
       mv.style.setProperty('pointer-events', 'all', 'important');
     }
     const es = document.elementsFromPoint(e.clientX, e.clientY);
@@ -18,17 +22,14 @@
     const vids = es.filter(e => e.src && e.tagName === 'VIDEO');
 
     const nlfy = e => {
-      elements.push({
-        e,
-        val: e.style['pointer-events']
-      });
+      elements.set(e, e.style['pointer-events']);
       e.style['pointer-events'] = 'none';
       e.dataset.igblock = true;
     };
 
-    if (imgs.length || vids.length) {
+    if (vids.length) { // prefer video over image
       for (const e of es) {
-        if (vids.length ? vids.includes(e) : imgs.includes(e)) {
+        if (vids.includes(e)) {
           break;
         }
         else {
@@ -36,17 +37,45 @@
         }
       }
     }
-    setTimeout(() => {
-      for (const {e, val} of elements) {
-        e.style['pointer-events'] = val;
-        delete e.dataset.igblock;
+    else if (imgs.length) {
+      for (const e of es) {
+        if (imgs.includes(e)) {
+          break;
+        }
+        else {
+          nlfy(e);
+        }
       }
-      elements = [];
-    }, 300);
+    }
   };
 
-  document.addEventListener('mousedown', mousedonw, true);
+  const mousedown = e => {
+    if (e.button !== 2) {
+      return;
+    }
+    e.stopPropagation();
+    revert();
+    unblock(e);
+    clearTimeout(revert.id);
+    revert.id = setTimeout(revert, 500);
+  };
+
+  const touchstart = e => {
+    e.stopPropagation();
+    revert();
+    unblock({
+      target: e.target,
+      clientX: e.touches[0].clientX,
+      clientY: e.touches[0].clientY
+    });
+    clearTimeout(revert.id);
+    revert.id = setTimeout(revert, 2000);
+  };
+
+  document.addEventListener('mousedown', mousedown, true);
+  document.addEventListener('touchstart', touchstart, true);
   window.pointers.run.add(() => {
-    document.removeEventListener('mousedown', mousedonw, true);
+    document.removeEventListener('mousedown', mousedown, true);
+    document.removeEventListener('touchstart', touchstart, true);
   });
 }
