@@ -18,7 +18,7 @@ Install the latest version:
 
 Please go to
 
-* https://add0n.com/allow-right-click.html
+* https://webextension.org/listing/allow-right-click.html
 
 ## Screenshos
 
