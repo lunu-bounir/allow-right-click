@@ -20,6 +20,7 @@
 
     const imgs = es.filter(e => e.src && e.tagName !== 'VIDEO');
     const vids = es.filter(e => e.src && e.tagName === 'VIDEO');
+    const npts = es.filter(e => e.type && e.type.startsWith('text')); // INPUT[type=text], TEXTAREA
 
     const nlfy = e => {
       elements.set(e, e.style['pointer-events']);
@@ -29,7 +30,7 @@
 
     if (vids.length) { // prefer video over image
       for (const e of es) {
-        if (vids.includes(e)) {
+        if (vids.includes(e) || npts.includes(e)) {
           break;
         }
         else {
@@ -39,7 +40,17 @@
     }
     else if (imgs.length) {
       for (const e of es) {
-        if (imgs.includes(e)) {
+        if (imgs.includes(e) || npts.includes(e)) {
+          break;
+        }
+        else {
+          nlfy(e);
+        }
+      }
+    }
+    else if (npts.length) {
+      for (const e of es) {
+        if (npts.includes(e)) {
           break;
         }
         else {
