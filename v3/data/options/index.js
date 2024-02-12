@@ -44,8 +44,12 @@ document.getElementById('reset').addEventListener('click', e => {
   else {
     localStorage.clear();
     chrome.storage.local.clear(() => {
-      chrome.runtime.reload();
-      window.close();
+      chrome.permissions.remove({
+        origins: ['*://*/*']
+      }, () => {
+        chrome.runtime.reload();
+        window.close();
+      });
     });
   }
 });
@@ -98,6 +102,21 @@ document.getElementById('subframe').onclick = () => {
     }
     else {
       notify(granted ? 'Permission granted' : 'Permission denied');
+    }
+    check();
+  });
+};
+document.getElementById('no-subframe').onclick = () => {
+  chrome.permissions.remove({
+    origins: ['*://*/*']
+  }, granted => {
+    const lastError = chrome.runtime.lastError;
+
+    if (lastError) {
+      notify(lastError.message);
+    }
+    else {
+      notify('Permission removed');
     }
     check();
   });
