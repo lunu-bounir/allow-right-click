@@ -14,6 +14,7 @@ const onClicked = (tabId, properties = {}) => chrome.scripting.executeScript({
     tabId,
     ...properties
   },
+  injectImmediately: true,
   files: ['/data/inject/core.js']
 }, () => {
   const lastError = chrome.runtime.lastError;
@@ -54,6 +55,7 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
           tabId: sender.tab.id,
           frameIds: [sender.frameId]
         },
+        injectImmediately: true,
         files: ['/data/inject/' + file]
       });
     }
@@ -76,6 +78,7 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
         tabId: sender.tab.id,
         frameIds: [sender.frameId]
       },
+      injectImmediately: true,
       func: code => {
         const script = document.createElement('script');
         script.classList.add('arclck');

@@ -9,13 +9,18 @@
     e.stopPropagation();
 
     // what if element is not clickable
-    [...e.target.querySelectorAll('img,video')].forEach(e => {
-      e.style.setProperty('pointer-events', 'all', 'important');
-    });
+    for (const mv of (e.target.parentElement || e.target).querySelectorAll('img,video')) {
+      elements.push({
+        e: mv,
+        val: mv.style['pointer-events']
+      });
+      mv.style.setProperty('pointer-events', 'all', 'important');
+    }
     const es = document.elementsFromPoint(e.clientX, e.clientY);
 
     const imgs = es.filter(e => e.src && e.tagName !== 'VIDEO');
     const vids = es.filter(e => e.src && e.tagName === 'VIDEO');
+    const npts = es.filter(e => e.type && e.type.startsWith('text')); // INPUT[type=text], TEXTAREA
 
     const nlfy = e => {
       elements.push({
@@ -26,23 +31,35 @@
       e.dataset.igblock = true;
     };
 
-    if (imgs.length || vids.length) {
+    if (vids.length) { // prefer video over image
       for (const e of es) {
-        if (vids.length ? vids.indexOf(e) !== -1 : imgs.indexOf(e) !== -1) {
+        if (vids.includes(e) || npts.includes(e)) {
           break;
         }
         else {
           nlfy(e);
         }
       }
-      // window.pointers.inject(`{
-      //   const es = document.elementsFromPoint(${e.clientX}, ${e.clientY});
-      //   for (const e of es) {
-      //     const c = e.oncontextmenu;
-      //     e.oncontextmenu = e => e.preventDefault = () => {};
-      //     setTimeout(() => e.oncontextmenu = c, 300);
-      //   }
-      // }`);
+    }
+    else if (imgs.length) {
+      for (const e of es) {
+        if (imgs.includes(e) || npts.includes(e)) {
+          break;
+        }
+        else {
+          nlfy(e);
+        }
+      }
+    }
+    else if (npts.length) {
+      for (const e of es) {
+        if (npts.includes(e)) {
+          break;
+        }
+        else {
+          nlfy(e);
+        }
+      }
     }
     setTimeout(() => {
       for (const {e, val} of elements) {
