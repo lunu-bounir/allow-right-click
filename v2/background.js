@@ -143,42 +143,46 @@ const permission = () => chrome.permissions.contains({
       contexts: ['browser_action']
     });
   };
-  chrome.runtime.onInstalled.addListener(callback);
-  chrome.runtime.onStartup.addListener(callback);
+  if (chrome.contextMenus) {
+    chrome.runtime.onInstalled.addListener(callback);
+    chrome.runtime.onStartup.addListener(callback);
+  }
 }
-chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === 'test') {
-    chrome.tabs.create({
-      url: 'https://webbrowsertools.com/test-right-click',
-      index: tab.index + 1
-    });
-  }
-  else if (info.menuItemId === 'inject-sub') {
-    chrome.permissions.request({
-      origins: ['*://*/*']
-    }, permission);
-  }
-  else {
-    const url = tab.url || info.pageUrl;
-    if (url.startsWith('http')) {
-      const {hostname} = new URL(url);
-      localStorage.setItem('hostname:' + hostname, true);
-      if (chrome.webNavigation) {
-        chrome.storage.local.set({
-          monitor: true
-        });
-        notify(`"${hostname}" is added to the list`);
-      }
-      else {
-        notify('For this feature to work, you need to enable "webNavigation" permission from the options page');
-        setTimeout(() => chrome.runtime.openOptionsPage(), 3000);
-      }
+if (chrome.contextMenus) {
+  chrome.contextMenus.onClicked.addListener((info, tab) => {
+    if (info.menuItemId === 'test') {
+      chrome.tabs.create({
+        url: 'https://webbrowsertools.com/test-right-click',
+        index: tab.index + 1
+      });
+    }
+    else if (info.menuItemId === 'inject-sub') {
+      chrome.permissions.request({
+        origins: ['*://*/*']
+      }, permission);
     }
     else {
-      notify('this is not a valid URL');
+      const url = tab.url || info.pageUrl;
+      if (url.startsWith('http')) {
+        const {hostname} = new URL(url);
+        localStorage.setItem('hostname:' + hostname, true);
+        if (chrome.webNavigation) {
+          chrome.storage.local.set({
+            monitor: true
+          });
+          notify(`"${hostname}" is added to the list`);
+        }
+        else {
+          notify('For this feature to work, you need to enable "webNavigation" permission from the options page');
+          setTimeout(() => chrome.runtime.openOptionsPage(), 3000);
+        }
+      }
+      else {
+        notify('this is not a valid URL');
+      }
     }
-  }
-});
+  });
+}
 
 /* FAQs & Feedback */
 {
