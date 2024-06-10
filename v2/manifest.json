@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "version": "0.5.6",
+  "version": "0.5.6.1",
   "name": "Allow Right-Click",
   "description": "Re-enable the possibility to use the context menu, copy, paste, and text selection on sites that prevent them",
   "icons": {
@@ -34,7 +34,7 @@
     "page": "/data/options/index.html",
     "open_in_tab": false
   },
-  "applications": {
+  "browser_specific_settings": {
     "gecko": {
        "id": "{278b0ae0-da9d-4cc6-be81-5aa7f3202672}"
     }

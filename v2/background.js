@@ -107,6 +107,8 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
     }
   });
   callback();
+  // https://github.com/lunu-bounir/allow-right-click/issues/43#issuecomment-2156454491
+  chrome.runtime.onStartup.addListener(() => callback());
   chrome.storage.onChanged.addListener(prefs => {
     if (prefs.monitor && prefs.monitor.newValue !== prefs.monitor.oldValue) {
       callback();
