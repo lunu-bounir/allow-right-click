@@ -90,3 +90,6 @@
     document.removeEventListener('touchstart', touchstart, true);
   });
 }
+
+// eslint-disable-next-line semi
+''

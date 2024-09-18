@@ -26,7 +26,11 @@
   "action": {},
   "homepage_url": "https://webextension.org/listing/allow-right-click.html",
   "background": {
-    "service_worker": "worker.js"
+    "service_worker": "worker.js",
+    "scripts": [
+      "context.js",
+      "worker.js"
+    ]
   },
   "options_ui": {
     "open_in_tab": true,
@@ -34,5 +38,14 @@
   },
   "commands": {
     "_execute_action": {}
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{278b0ae0-da9d-4cc6-be81-5aa7f3202672}",
+      "strict_min_version": "128.0"
+    },
+    "gecko_android": {
+      "strict_min_version": "128.0"
+    }
   }
 }

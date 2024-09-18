@@ -38,3 +38,6 @@
     document.addEventListener('DOMContentLoaded', next);
   }
 }
+
+// eslint-disable-next-line semi
+''

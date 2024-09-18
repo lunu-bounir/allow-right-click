@@ -41,6 +41,7 @@ window.pointers.inject = code => chrome.runtime.sendMessage({
 
       chrome.runtime.sendMessage({
         method: 'inject',
+        automated: self.automated,
         files: [
           'user-select.js',
           'styles.js',
@@ -48,6 +49,7 @@ window.pointers.inject = code => chrome.runtime.sendMessage({
           'listen.js'
         ]
       });
+      delete self.automated;
     }
     else {
       window.pointers.status = 'removed';
@@ -86,3 +88,6 @@ window.pointers.inject = code => chrome.runtime.sendMessage({
     });
   }
 }
+
+// eslint-disable-next-line semi
+''

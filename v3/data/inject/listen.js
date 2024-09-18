@@ -95,3 +95,6 @@ window.pointers.inject(`
     document.removeEventListener('mousedown', skip, true);
   });
 }
+
+// eslint-disable-next-line semi
+''

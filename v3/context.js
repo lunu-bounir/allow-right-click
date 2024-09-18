@@ -1,9 +1,18 @@
 /* global g, permission, notify */
 {
-  const callback = () => {
+  const once = () => {
+    if (once.installed) {
+      return;
+    }
+    once.installed = true;
     chrome.contextMenus.create({
       id: 'add-to-whitelist',
       title: g('bg_context_3'),
+      contexts: ['action']
+    });
+    chrome.contextMenus.create({
+      id: 'remove-from-whitelist',
+      title: g('bg_context_7'),
       contexts: ['action']
     });
     chrome.contextMenus.create({
@@ -19,11 +28,27 @@
       title: g('bg_context_5'),
       contexts: ['action']
     });
+    if (/Firefox/.test(navigator.userAgent)) {
+      chrome.contextMenus.create({
+        id: 'sep',
+        contexts: ['action'],
+        type: 'separator'
+      });
+      chrome.contextMenus.create({
+        id: 'options',
+        title: g('bg_context_6'),
+        contexts: ['action']
+      });
+    }
   };
-  chrome.runtime.onInstalled.addListener(callback);
+  chrome.runtime.onStartup.addListener(once);
+  chrome.runtime.onInstalled.addListener(once);
 }
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === 'test') {
+  if (info.menuItemId === 'options') {
+    chrome.runtime.openOptionsPage();
+  }
+  else if (info.menuItemId === 'test') {
     chrome.tabs.create({
       url: 'https://webbrowsertools.com/test-right-click',
       index: tab.index + 1
@@ -34,7 +59,39 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       origins: ['*://*/*']
     }, permission);
   }
-  else {
+  else if (info.menuItemId === 'add-to-whitelist') {
+    const url = tab.url || info.pageUrl || '';
+    if (url.startsWith('http')) {
+      chrome.permissions.contains({
+        origins: ['*://*/*']
+      }, granted => {
+        const {hostname} = new URL(url);
+        chrome.storage.local.get({
+          hostnames: []
+        }, prefs => {
+          chrome.storage.local.set({
+            hostnames: [...prefs.hostnames, hostname].filter((s, i, l) => s && l.indexOf(s) === i)
+          }, () => {
+            if (granted) {
+              chrome.storage.local.set({
+                monitor: true
+              });
+              notify(g('bg_msg_2', [hostname]));
+              chrome.tabs.reload(tab.id);
+            }
+            else {
+              notify(g('bg_msg_1'));
+              setTimeout(() => chrome.runtime.openOptionsPage(), 3000);
+            }
+          });
+        });
+      });
+    }
+    else {
+      notify(g('bg_e_2') + ': ' + url);
+    }
+  }
+  else if (info.menuItemId === 'remove-from-whitelist') {
     const url = tab.url || info.pageUrl;
     if (url.startsWith('http')) {
       const {hostname} = new URL(url);
@@ -42,23 +99,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
         hostnames: []
       }, prefs => {
         chrome.storage.local.set({
-          hostnames: [...prefs.hostnames, hostname].filter((s, i, l) => s && l.indexOf(s) === i)
+          hostnames: prefs.hostnames.filter(s => s !== hostname)
+        }, () => {
+          notify(g('bg_msg_3', [hostname]));
+          chrome.tabs.reload(tab.id);
         });
-      });
-
-      chrome.permissions.contains({
-        origins: ['*://*/*']
-      }, granted => {
-        if (granted) {
-          chrome.storage.local.set({
-            monitor: true
-          });
-          notify(`"${hostname}" is added to the list`);
-        }
-        else {
-          notify(g('bg_msg_1'));
-          setTimeout(() => chrome.runtime.openOptionsPage(), 3000);
-        }
       });
     }
     else {

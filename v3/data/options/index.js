@@ -89,6 +89,9 @@ document.getElementById('hostaccess').onchange = e => {
   }
   else {
     document.getElementById('whitelist').disabled = true;
+    chrome.permissions.remove({
+      origins: ['*://*/*']
+    });
   }
 };
 document.getElementById('subframe').onclick = () => {

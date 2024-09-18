@@ -1,28 +1,47 @@
-self.importScripts('./context.js');
+if (typeof importScripts !== 'undefined') {
+  self.importScripts('context.js');
+}
 
-const g = id => chrome.i18n.getMessage(id);
+const g = (...args) => chrome.i18n.getMessage(...args);
 
 const notify = message => chrome.notifications.create({
   title: chrome.runtime.getManifest().name,
   message,
   type: 'basic',
   iconUrl: '/data/icons/48.png'
-});
+}, id => setTimeout(chrome.notifications.clear, 5000, id));
 
-const onClicked = (tabId, properties = {}) => chrome.scripting.executeScript({
-  target: {
-    tabId,
-    ...properties
-  },
-  injectImmediately: true,
-  files: ['/data/inject/core.js']
-}, () => {
-  const lastError = chrome.runtime.lastError;
-  if (lastError) {
-    console.warn(lastError);
-    notify(lastError.message);
+const onClicked = async (tabId, properties = {}, silent = false) => {
+  try {
+    // automated
+    if (silent && properties?.frameIds?.includes(0)) {
+      await chrome.scripting.executeScript({
+        target: {
+          tabId,
+          ...properties
+        },
+        injectImmediately: true,
+        func: () => {
+          self.automated = true;
+        }
+      });
+    }
+    await chrome.scripting.executeScript({
+      target: {
+        tabId,
+        ...properties
+      },
+      injectImmediately: true,
+      files: ['/data/inject/core.js']
+    });
   }
-});
+  catch (e) {
+    console.warn(e);
+    if (silent !== true) {
+      notify(e.message);
+    }
+  }
+};
 chrome.action.onClicked.addListener(tab => onClicked(tab.id, {
   allFrames: true
 }));
@@ -43,9 +62,9 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
       chrome.action.setIcon({
         tabId: sender.tab.id,
         path: {
-          '16': '/data/icons/active/16.png',
-          '32': '/data/icons/active/32.png',
-          '48': '/data/icons/active/48.png'
+          '16': '/data/icons/' + (request.automated ? 'automated' : 'active') + '/16.png',
+          '32': '/data/icons/' + (request.automated ? 'automated' : 'active') + '/32.png',
+          '48': '/data/icons/' + (request.automated ? 'automated' : 'active') + '/48.png'
         }
       });
     }
@@ -99,7 +118,7 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
   else if (request.method === 'simulate-click') {
     onClicked(sender.tab.id, {
       frameIds: [sender.frameId]
-    });
+    }, true);
   }
 });
 
@@ -177,8 +196,7 @@ const permission = () => chrome.permissions.contains({
 {
   const {management, runtime: {onInstalled, setUninstallURL, getManifest}, storage, tabs} = chrome;
   if (navigator.webdriver !== true) {
-    const page = getManifest().homepage_url;
-    const {name, version} = getManifest();
+    const {homepage_url: page, name, version} = getManifest();
     onInstalled.addListener(({reason, previousVersion}) => {
       management.getSelf(({installType}) => installType === 'normal' && storage.local.get({
         'faqs': true,
@@ -187,7 +205,7 @@ const permission = () => chrome.permissions.contains({
         if (reason === 'install' || (prefs.faqs && reason === 'update')) {
           const doUpdate = (Date.now() - prefs['last-update']) / 1000 / 60 / 60 / 24 > 45;
           if (doUpdate && previousVersion !== version) {
-            tabs.query({active: true, currentWindow: true}, tbs => tabs.create({
+            tabs.query({active: true, lastFocusedWindow: true}, tbs => tabs.create({
               url: page + '?version=' + version + (previousVersion ? '&p=' + previousVersion : '') + '&type=' + reason,
               active: reason === 'install',
               ...(tbs && tbs.length && {index: tbs[0].index + 1})

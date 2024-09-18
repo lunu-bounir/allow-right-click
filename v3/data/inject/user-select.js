@@ -116,3 +116,6 @@ window.pointers.inject(`
   }
   catch (e) {}
 `);
+
+// eslint-disable-next-line semi
+''

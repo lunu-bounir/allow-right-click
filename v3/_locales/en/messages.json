@@ -12,7 +12,10 @@
     "message": "(already has access)"
   },
   "bg_context_3": {
-    "message": "Automatically Activate this Extension on this Hostname"
+    "message": "Automatically Activate on This Host"
+  },
+  "bg_context_7": {
+    "message": "Remove This Host from Activation List"
   },
   "bg_context_4": {
     "message": "Unblock Sub-Frame Elements"
@@ -20,10 +23,29 @@
   "bg_context_5": {
     "message": "Test Right-Click"
   },
+  "bg_context_6": {
+    "message": "Options"
+  },
   "bg_msg_1": {
     "message": "For this feature to work, you need to enable host permission from the options page"
   },
   "bg_e_2": {
     "message": "This is not a valid URL"
+  },
+  "bg_msg_2": {
+    "message": "'$hostname$' is added to the list. Refreshing the page...",
+    "placeholders": {
+      "hostname": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_msg_3": {
+    "message": "'$hostname$' is removed from the list. Refreshing the page...",
+    "placeholders": {
+      "hostname": {
+        "content": "$1"
+      }
+    }
   }
 }
