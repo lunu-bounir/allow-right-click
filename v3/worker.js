@@ -69,14 +69,25 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
       });
     }
     for (const file of request.files) {
-      chrome.scripting.executeScript({
-        target: {
-          tabId: sender.tab.id,
-          frameIds: [sender.frameId]
-        },
-        injectImmediately: true,
-        files: ['/data/inject/' + file]
-      });
+      if (file.includes('.js')) {
+        chrome.scripting.executeScript({
+          target: {
+            tabId: sender.tab.id,
+            frameIds: [sender.frameId]
+          },
+          injectImmediately: true,
+          files: ['/data/inject/' + file]
+        });
+      }
+      else {
+        chrome.scripting.insertCSS({
+          target: {
+            tabId: sender.tab.id,
+            frameIds: [sender.frameId]
+          },
+          files: ['/data/inject/' + file]
+        });
+      }
     }
   }
   else if (request.method === 'release') {
