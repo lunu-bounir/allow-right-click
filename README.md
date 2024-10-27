@@ -2,6 +2,9 @@
 
 Re-enable the possibility to use the context menu, copy, paste, and text selection on sites that prevent them.
 
+## YouTube Preview
+[![YouTube Preview](https://img.youtube.com/vi/HzapxK3JfG0/0.jpg)](https://www.youtube.com/watch?v=HzapxK3JfG0)
+
 ## Installation
 
 Install the latest version:
