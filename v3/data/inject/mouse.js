@@ -2,6 +2,7 @@
 {
   const elements = new Map();
   const controllers = new Set();
+  const tmps = new Set();
 
   const revert = reason => {
     // console.log('reverting', reason);
@@ -15,6 +16,10 @@
       controller.abort();
     }
     controllers.clear();
+    for (const img of tmps) {
+      img.remove();
+    }
+    tmps.clear();
   };
 
   const unblock = e => {
@@ -28,6 +33,17 @@
     const imgs = es.filter(e => (e.src && e.tagName !== 'VIDEO') || e.tagName === 'CANVAS');
     const vids = es.filter(e => e.src && e.tagName === 'VIDEO');
     const npts = es.filter(e => e.type && e.type.startsWith('text')); // INPUT[type=text], TEXTAREA
+    const bgs = [];
+    for (const e of es) {
+      const style = getComputedStyle(e);
+      const v = style.backgroundImage;
+      if (v) {
+        const match = v.match(/url\(["']?(.*?)["']?\)/);
+        if (match) {
+          bgs.push(match[1]);
+        }
+      }
+    }
 
     const nlfy = e => {
       elements.set(e, e.style['pointer-events']);
@@ -67,6 +83,21 @@
           nlfy(e);
         }
       }
+    }
+    else if (bgs.length) {
+      const img = new Image();
+      img.width = 10;
+      img.height = 10;
+      img.style = `
+        position: fixed;
+        left: ${e.clientX - 5}px;
+        top: ${e.clientY - 5}px;
+        opacity: 0;
+        z-index: 2147483647;
+      `;
+      img.src = bgs[0];
+      document.body.append(img);
+      tmps.add(img);
     }
   };
 
