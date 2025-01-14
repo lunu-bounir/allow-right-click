@@ -97,25 +97,6 @@
     }
   });
 }
-// user-select (JS) [intrusive; enable on selected hostnames]
-window.pointers.inject(`
-  try {
-    let active = true;
-
-    Selection.prototype.removeAllRanges = new Proxy(Selection.prototype.removeAllRanges, {
-      apply(target, self, args) {
-        if (active) {
-          return undefined;
-        }
-        return Reflect.apply(target, self, args);
-      }
-    });
-
-    document.currentScript.addEventListener('remove', () => active = false);
-    document.currentScript.addEventListener('install', () => active = true);
-  }
-  catch (e) {}
-`);
 
 // eslint-disable-next-line semi
 ''

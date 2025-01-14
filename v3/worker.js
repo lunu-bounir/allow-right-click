@@ -68,7 +68,7 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
         }
       });
     }
-    for (const file of request.files) {
+    for (const file of request.protected) {
       if (file.includes('.js')) {
         chrome.scripting.executeScript({
           target: {
@@ -89,6 +89,17 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
         });
       }
     }
+    for (const file of request.unprotected) {
+      chrome.scripting.executeScript({
+        target: {
+          tabId: sender.tab.id,
+          frameIds: [sender.frameId]
+        },
+        injectImmediately: true,
+        files: ['/data/inject/' + file],
+        world: 'MAIN'
+      });
+    }
   }
   else if (request.method === 'release') {
     if (sender.frameId === 0) {
@@ -101,30 +112,6 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
         }
       });
     }
-  }
-  else if (request.method === 'inject-unprotected') {
-    chrome.scripting.executeScript({
-      target: {
-        tabId: sender.tab.id,
-        frameIds: [sender.frameId]
-      },
-      injectImmediately: true,
-      func: code => {
-        const script = document.createElement('script');
-        script.classList.add('arclck');
-        script.textContent = 'document.currentScript.dataset.injected = true;' + code;
-        document.documentElement.appendChild(script);
-        if (script.dataset.injected !== 'true') {
-          const s = document.createElement('script');
-          s.classList.add('arclck');
-          s.src = 'data:text/javascript;charset=utf-8;base64,' + btoa(code);
-          document.documentElement.appendChild(s);
-          script.remove();
-        }
-      },
-      args: [request.code],
-      world: 'MAIN'
-    });
   }
   else if (request.method === 'simulate-click') {
     onClicked(sender.tab.id, {

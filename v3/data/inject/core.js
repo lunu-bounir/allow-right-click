@@ -25,28 +25,23 @@ window.pointers.record = (e, name, value) => {
   window.pointers.cache.set(e, {name, value});
 };
 
-window.pointers.inject = code => chrome.runtime.sendMessage({
-  method: 'inject-unprotected',
-  code
-});
-
 {
   const next = () => {
     if (window.pointers.status === '' || window.pointers.status === 'removed') {
       window.pointers.status = 'ready';
 
-      for (const script of [...document.querySelectorAll('script.arclck')]) {
-        script.dispatchEvent(new Event('install'));
-      }
-
       chrome.runtime.sendMessage({
         method: 'inject',
         automated: self.automated,
-        files: [
-          'user-select.js',
+        protected: [
+          'user-select/isolated.js',
           'styles.js',
           'mouse.js',
-          'listen.js'
+          'listen/isolated.js'
+        ],
+        unprotected: [
+          'user-select/main.js',
+          'listen/main.js'
         ]
       });
       delete self.automated;
@@ -63,9 +58,7 @@ window.pointers.inject = code => chrome.runtime.sendMessage({
       }
       window.pointers.run = new Set();
 
-      for (const script of [...document.querySelectorAll('script.arclck')]) {
-        script.dispatchEvent(new Event('remove'));
-      }
+      document.documentElement.dispatchEvent(new Event('arc-remove'));
 
       for (const [e, {name, value}] of window.pointers.cache) {
         e.style[name] = value;
