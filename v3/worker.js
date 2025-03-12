@@ -4,12 +4,37 @@ if (typeof importScripts !== 'undefined') {
 
 const g = (...args) => chrome.i18n.getMessage(...args);
 
-const notify = message => chrome.notifications.create({
-  title: chrome.runtime.getManifest().name,
-  message,
-  type: 'basic',
-  iconUrl: '/data/icons/48.png'
-}, id => setTimeout(chrome.notifications.clear, 5000, id));
+const notify = async message => {
+  if (typeof chrome.notifications !== 'undefined') {
+    const id = await chrome.notifications.create({
+      title: chrome.runtime.getManifest().name,
+      message,
+      type: 'basic',
+      iconUrl: '/data/icons/48.png'
+    });
+    setTimeout(chrome.notifications.clear, 5000, id);
+  }
+  else { // Safari
+    const [tab] = await chrome.tabs.query({
+      active: true,
+      lastFocusedWindow: true
+    });
+    if (tab) {
+      chrome.action.setBadgeText({
+        tabId: tab.id,
+        text: 'E'
+      });
+      chrome.action.setTitle({
+        tabId: tab.id,
+        title: message
+      });
+      chrome.action.setBadgeBackgroundColor({
+        tabId: tab.id,
+        color: 'red'
+      });
+    }
+  }
+};
 
 const onClicked = async (tabId, properties = {}, silent = false) => {
   try {
@@ -26,7 +51,7 @@ const onClicked = async (tabId, properties = {}, silent = false) => {
         }
       });
     }
-    await chrome.scripting.executeScript({
+    const r = await chrome.scripting.executeScript({
       target: {
         tabId,
         ...properties
@@ -34,6 +59,13 @@ const onClicked = async (tabId, properties = {}, silent = false) => {
       injectImmediately: true,
       files: ['/data/inject/core.js']
     });
+    // Safari
+    if (r) {
+      const e = r.filter(o => o.frameId === 0 && o.error).shift();
+      if (e) {
+        throw Error(e.error);
+      }
+    }
   }
   catch (e) {
     console.warn(e);
@@ -192,27 +224,31 @@ const permission = () => chrome.permissions.contains({
 
 /* FAQs & Feedback */
 {
-  const {management, runtime: {onInstalled, setUninstallURL, getManifest}, storage, tabs} = chrome;
+  chrome.management = chrome.management || {
+    getSelf(c) {
+      c({installType: 'normal'});
+    }
+  };
   if (navigator.webdriver !== true) {
-    const {homepage_url: page, name, version} = getManifest();
-    onInstalled.addListener(({reason, previousVersion}) => {
-      management.getSelf(({installType}) => installType === 'normal' && storage.local.get({
+    const {homepage_url: page, name, version} = chrome.runtime.getManifest();
+    chrome.runtime.onInstalled.addListener(({reason, previousVersion}) => {
+      chrome.management.getSelf(({installType}) => installType === 'normal' && chrome.storage.local.get({
         'faqs': true,
         'last-update': 0
       }, prefs => {
         if (reason === 'install' || (prefs.faqs && reason === 'update')) {
           const doUpdate = (Date.now() - prefs['last-update']) / 1000 / 60 / 60 / 24 > 45;
           if (doUpdate && previousVersion !== version) {
-            tabs.query({active: true, lastFocusedWindow: true}, tbs => tabs.create({
+            chrome.tabs.query({active: true, lastFocusedWindow: true}, tbs => chrome.tabs.create({
               url: page + '?version=' + version + (previousVersion ? '&p=' + previousVersion : '') + '&type=' + reason,
               active: reason === 'install',
               ...(tbs && tbs.length && {index: tbs[0].index + 1})
             }));
-            storage.local.set({'last-update': Date.now()});
+            chrome.storage.local.set({'last-update': Date.now()});
           }
         }
       }));
     });
-    setUninstallURL(page + '?rd=feedback&name=' + encodeURIComponent(name) + '&version=' + version);
+    chrome.runtime.setUninstallURL(page + '?rd=feedback&name=' + encodeURIComponent(name) + '&version=' + version);
   }
 }

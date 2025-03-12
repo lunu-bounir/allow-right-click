@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "version": "0.6.4",
+  "version": "0.6.5",
   "default_locale": "en",
   "name": "Allow Right-Click",
   "description": "__MSG_description__",
@@ -23,7 +23,9 @@
   "optional_host_permissions": [
     "*://*/*"
   ],
-  "action": {},
+  "action": {
+    "default_title": "Click once to activate on this tab, and again to deactivate. Blue means active, gray means inactive. Use right-click for more features."
+  },
   "homepage_url": "https://webextension.org/listing/allow-right-click.html",
   "background": {
     "service_worker": "worker.js",
@@ -37,7 +39,9 @@
     "page": "/data/options/index.html"
   },
   "commands": {
-    "_execute_action": {}
+    "_execute_action": {
+      "description": "Execute Action"
+    }
   },
   "browser_specific_settings": {
     "gecko": {
