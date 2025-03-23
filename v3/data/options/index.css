@@ -72,3 +72,17 @@ input[type=button]:disabled {
     display: none;
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #23222b;
+    color: #bfbfbf;
+  }
+  textarea {
+    color: #bfbfbf;
+  }
+  .note {
+    border: solid 1px #7e6d09;
+    background-color: #665906;
+  }
+}
