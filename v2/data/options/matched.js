@@ -82,6 +82,19 @@
     z-index: 1000000;
     cursor: pointer;
     font-size: 15px;
+  }
+  @media (prefers-color-scheme: dark) {
+    #explore {
+      background-color: #23222b;
+      color: #bfbfbf;
+    }
+    #explore a {
+      color: #bfbfbf;
+    }
+    #explore[data-loaded=true] {
+      box-shadow: 0 0 4px #bfbfbf;
+      border: solid 1px #bfbfbf;
+    }
   }`;
   document.documentElement.appendChild(style);
 

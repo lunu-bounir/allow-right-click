@@ -56,3 +56,13 @@ input[type=button]:disabled {
   grid-gap: 5px;
   align-items: start;
 }
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #23222b;
+    color: #bfbfbf;
+  }
+  textarea {
+    color: #bfbfbf;
+  }
+}
