@@ -1,8 +1,11 @@
+html {
+  color-scheme: light dark;
+}
 body {
   font-size: 14px;
   font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
-  background-color: #fff;
-  color: #4d5156;
+  background-color: light-dark(#fff, #23222b);
+  color: light-dark(#4d5156, #bfbfbf);
   margin: auto;
   width: min(100% - 2rem, 70rem);
 }
@@ -41,7 +44,7 @@ input[type=number] {
 textarea:focus,
 input[type=text]:focus,
 input[type=number]:focus {
-  background-color: #e5f8ff;
+  background-color: light-dark(#e5f8ff, #0d2833);
 }
 a,
 a:visited {
@@ -49,7 +52,7 @@ a:visited {
   text-decoration: none;
 }
 textarea:disabled {
-  opacity: 0.4;
+  opacity: 0.5;
 }
 input[type=button]:disabled {
   opacity: 0.5;
@@ -62,27 +65,13 @@ input[type=button]:disabled {
   align-items: center;
 }
 .note {
-  border: solid 1px #fcdc9e;
+  border: solid 1px light-dark(#fcdc9e, #5a5017);
   padding: 1ch;
-  background-color: #fff3dc;
+  background-color: light-dark(#fff3dc, #3a382a);
 }
 
 @supports (-webkit-hyphens: none) and (not (-moz-appearance: none)) {
   #support {
     display: none;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: #23222b;
-    color: #bfbfbf;
-  }
-  textarea {
-    color: #bfbfbf;
-  }
-  .note {
-    border: solid 1px #7e6d09;
-    background-color: #665906;
   }
 }
