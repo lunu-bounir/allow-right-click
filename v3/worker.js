@@ -59,11 +59,15 @@ const onClicked = async (tabId, properties = {}, silent = false) => {
       injectImmediately: true,
       files: ['/data/inject/core.js']
     });
-    // Safari
     if (r) {
-      const e = r.filter(o => o.frameId === 0 && o.error).shift();
+      // Safari
+      const e = r.filter(o => o && o.frameId === 0 && o.error).shift();
       if (e) {
         throw Error(e.error);
+      }
+      // Firefox
+      if (r.length === 1 && r[0] === undefined) {
+        throw Error('This is an internal page');
       }
     }
   }

@@ -1,11 +1,19 @@
 'use strict';
 
 const toast = document.getElementById('toast');
-const notify = msg => {
+const notify = (msg, timeout = 2000) => new Promise(resolve => {
+  if (notify.resolve) {
+    notify.resolve();
+  }
   clearTimeout(notify.id);
   toast.textContent = msg;
-  notify.id = setTimeout(() => toast.textContent = '', 2000);
-};
+  notify.id = setTimeout(() => {
+    toast.textContent = '';
+    resolve();
+    delete notify.resolve;
+  }, timeout);
+  notify.resolve = resolve;
+});
 
 chrome.storage.local.get({
   'hostnames': []
@@ -13,20 +21,40 @@ chrome.storage.local.get({
   document.getElementById('whitelist').value = prefs.hostnames.join(', ');
 });
 
-document.getElementById('save').addEventListener('click', () => {
-  const hostnames = document.getElementById('whitelist').value.split(/\s*,\s*/).map(s => {
-    s = s.trim();
-    if (s && s.startsWith('http')) {
-      try {
-        return (new URL(s)).origin;
+document.getElementById('save').addEventListener('click', async () => {
+  const matches = document.getElementById('whitelist').value.split(/\s*,\s*/)
+    .map(s => s = s.trim()).filter((s, i, l) => s && l.indexOf(s) === i);
+
+  const hostnames = [];
+  // make sure the provided list is working
+  for (const hostname of matches) {
+    let m = hostname;
+    if (m.includes(':') === false) {
+      m = '*://' + m;
+    }
+    if (m.endsWith('*') === false) {
+      if (m.endsWith('/')) {
+        m += '*';
       }
-      catch (e) {
-        console.error(e);
-        return '';
+      else {
+        m += '/*';
       }
     }
-    return s;
-  }).filter((s, i, l) => s && l.indexOf(s) === i);
+    try {
+      await chrome.scripting.registerContentScripts([{
+        id: 'test',
+        matchOriginAsFallback: true,
+        js: ['/data/inject/test.js'],
+        matches: [m]
+      }]);
+      hostnames.push(hostname);
+    }
+    catch (e) {
+      console.error(e);
+      await notify(`[Invalid Pattern] ${m} → ` + e.message, 6000);
+    }
+    await chrome.scripting.unregisterContentScripts({ids: ['test']}).catch(() => {});
+  }
 
   chrome.storage.local.set({
     'monitor': hostnames.length > 0,
