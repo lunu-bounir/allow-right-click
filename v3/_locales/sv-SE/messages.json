@@ -1,0 +1,51 @@
+{
+  "description": {
+    "message": "Återaktivera möjligheten att använda innehållsmenyn, kopiera, klistra in och textmarkera på webbplatser som förhindrar det."
+  },
+  "bg_e_1": {
+    "message": "Det går inte att använda följande automatiseringsregel"
+  },
+  "bg_context_1": {
+    "message": "Avblockera underramselement"
+  },
+  "bg_context_2": {
+    "message": "(har redan åtkomst)"
+  },
+  "bg_context_3": {
+    "message": "Aktivera automatiskt på den här värden"
+  },
+  "bg_context_7": {
+    "message": "Ta bort den här värden från aktiveringslistan"
+  },
+  "bg_context_4": {
+    "message": "Avblockera underramselement"
+  },
+  "bg_context_5": {
+    "message": "Testa högerklicka"
+  },
+  "bg_context_6": {
+    "message": "Alternativ"
+  },
+  "bg_msg_1": {
+    "message": "För att den här funktionen ska fungera måste du aktivera värdbehörighet från alternativsidan."
+  },
+  "bg_e_2": {
+    "message": "Detta är inte en giltig webbadress"
+  },
+  "bg_msg_2": {
+    "message": "'$hostname$' har lagts till i listan. Uppdaterar sidan...",
+    "placeholders": {
+      "hostname": {
+        "content": "$1"
+      }
+    }
+  },
+  "bg_msg_3": {
+    "message": "'$hostname$' är borttagen från listan. Uppdaterar sidan...",
+    "placeholders": {
+      "hostname": {
+        "content": "$1"
+      }
+    }
+  }
+}
