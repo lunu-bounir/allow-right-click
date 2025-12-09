@@ -16,9 +16,11 @@ const notify = (msg, timeout = 2000) => new Promise(resolve => {
 });
 
 chrome.storage.local.get({
-  'hostnames': []
+  'hostnames': [],
+  'faqs': true
 }, prefs => {
   document.getElementById('whitelist').value = prefs.hostnames.join(', ');
+  document.getElementById('faqs').checked = prefs.faqs;
 });
 
 document.getElementById('save').addEventListener('click', async () => {
@@ -58,6 +60,7 @@ document.getElementById('save').addEventListener('click', async () => {
 
   chrome.storage.local.set({
     'monitor': hostnames.length > 0,
+    'faqs': document.getElementById('faqs').checked,
     hostnames
   });
   document.getElementById('whitelist').value = hostnames.join(', ');

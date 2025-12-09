@@ -33,8 +33,15 @@
     const imgs = es.filter(e => (e.src && e.tagName !== 'VIDEO') || e.tagName === 'CANVAS');
     const vids = es.filter(e => e.src && e.tagName === 'VIDEO');
     const npts = es.filter(e => e.type && e.type.startsWith('text')); // INPUT[type=text], TEXTAREA
+
+
     const bgs = [];
     for (const e of es) {
+      // if input is editable, detecting bg image cause wrong context to appear
+      if (['INPUT', 'TEXTAREA'].includes(e.tagName)) {
+        continue;
+      }
+
       const style = getComputedStyle(e);
       const v = style.backgroundImage;
       if (v) {

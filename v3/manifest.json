@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "version": "0.6.6",
+  "version": "0.6.7",
   "default_locale": "en",
   "name": "Allow Right-Click",
   "description": "__MSG_description__",
