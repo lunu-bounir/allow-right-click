@@ -1,0 +1,24 @@
+<style>
+  .stack {
+    display: grid;
+    grid-template-columns: 1 / 1;
+    grid-template-rows: 1 / 1;
+    & > * {
+      grid-area: 1/1;
+    }
+  }
+</style>
+<h1>BG Only</h1>
+<div role="img" style="background: url(bg.jpg); width: 100px; height: 100px;"></div>
+<h1>IMG Only</h1>
+<img src="img.png">
+<h1>IMG over BG</h1>
+<div class="stack">
+  <div role="img" style="background: url(bg.jpg); width: 100px; height: 100px;"></div>
+  <img src="img.png">
+</div>
+<h1>BG over IMG</h1>
+<div class="stack">
+  <img src="img.png">
+  <div role="img" style="background: url(bg.jpg); width: 100px; height: 100px;"></div>
+</div>

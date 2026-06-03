@@ -30,13 +30,22 @@
     }
     const es = document.elementsFromPoint(e.clientX, e.clientY);
 
-    const imgs = es.filter(e => (e.src && e.tagName !== 'VIDEO') || e.tagName === 'CANVAS');
-    const vids = es.filter(e => e.src && e.tagName === 'VIDEO');
-    const npts = es.filter(e => e.type && e.type.startsWith('text')); // INPUT[type=text], TEXTAREA
-
-
+    const imgs = [];
+    const vids = [];
+    const npts = []; // INPUT[type=text], TEXTAREA
     const bgs = [];
+
     for (const e of es) {
+      if ((e.src && e.tagName !== 'VIDEO') || e.tagName === 'CANVAS') {
+        imgs.push(e);
+      }
+      if (e.src && e.tagName === 'VIDEO') {
+        vids.push(e);
+      }
+      if (e.type && e.type.startsWith('text')) {
+        npts.push(e);
+      }
+
       // if input is editable, detecting bg image cause wrong context to appear
       if (['INPUT', 'TEXTAREA'].includes(e.tagName)) {
         continue;
@@ -47,7 +56,10 @@
       if (v) {
         const match = v.match(/url\(["']?(.*?)["']?\)/);
         if (match) {
-          bgs.push(match[1]);
+          bgs.push({
+            e,
+            src: match[1]
+          });
         }
       }
     }
@@ -69,14 +81,51 @@
         }
       }
     }
-    else if (imgs.length) {
-      for (const e of es) {
-        if (imgs.includes(e) || npts.includes(e)) {
-          e.focus();
-          break;
+    else if (imgs.length || bgs.length) {
+      const next = {
+        imgs() {
+          for (const e of es) {
+            if (imgs.includes(e) || npts.includes(e)) {
+              e.focus();
+              break;
+            }
+            else {
+              nlfy(e);
+            }
+          }
+        },
+        bgs() {
+          const img = new Image();
+          img.width = 10;
+          img.height = 10;
+          img.style = `
+            position: fixed;
+            left: ${e.clientX - 5}px;
+            top: ${e.clientY - 5}px;
+            opacity: 0;
+            z-index: 2147483647;
+          `;
+          img.src = bgs[0].src;
+          document.body.append(img);
+          tmps.add(img);
+        }
+      };
+      // should we prefer img or bg based on their index
+      if (imgs.length === 0) {
+        next.bgs();
+      }
+      else if (bgs.length === 0) {
+        next.imgs();
+      }
+      else {
+        const ni = es.indexOf(imgs[0]);
+        const nb = es.indexOf(bgs[0].e);
+
+        if (nb < ni) {
+          next.bgs();
         }
         else {
-          nlfy(e);
+          next.imgs();
         }
       }
     }
@@ -90,21 +139,6 @@
           nlfy(e);
         }
       }
-    }
-    else if (bgs.length) {
-      const img = new Image();
-      img.width = 10;
-      img.height = 10;
-      img.style = `
-        position: fixed;
-        left: ${e.clientX - 5}px;
-        top: ${e.clientY - 5}px;
-        opacity: 0;
-        z-index: 2147483647;
-      `;
-      img.src = bgs[0];
-      document.body.append(img);
-      tmps.add(img);
     }
   };
 
